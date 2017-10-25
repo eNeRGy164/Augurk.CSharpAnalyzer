@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.MSBuild;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace ConsoleApplication1
 {
@@ -29,10 +30,10 @@ namespace ConsoleApplication1
             var specProject = solution.Projects.FirstOrDefault(p => p.Name == "Specifications");
             var compilation = Projects[specProject].Value;
 
-
+            IStackTraceCollector collector = new ConsoleStrackTraceCollector();
             foreach (var tree in compilation.SyntaxTrees)
             {
-                var visitor = new EntryPointFinder(compilation, compilation.GetSemanticModel(tree));
+                var visitor = new EntryPointFinder(compilation.GetSemanticModel(tree), collector);
                 visitor.Visit(tree.GetRoot());
             }
 
@@ -42,23 +43,27 @@ namespace ConsoleApplication1
 
         class EntryPointFinder : CSharpSyntaxRewriter
         {
-            public EntryPointFinder(Compilation compilation, SemanticModel model)
+            public EntryPointFinder(SemanticModel model, IStackTraceCollector collector)
             {
-                this.compilation = compilation;
                 this.model = model;
+                this.collector = collector;
             }
 
-            private readonly Compilation compilation;
             private readonly SemanticModel model;
+            private readonly IStackTraceCollector collector;
 
             public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
             {
                 var symbolInfo = model.GetDeclaredSymbol(node);
                 var attributes = symbolInfo.GetAttributes();
-                if (attributes.Any(attribute => attribute.AttributeClass.Name == "BindingAttribute"))// && attribute.AttributeClass.ContainingNamespace.Name == "TechTalk.SpecFlow"))
+
+                // TODO Remove this if
+                if (symbolInfo.Name.Contains("DayRemunerationSteps"))
                 {
-                    Console.WriteLine(node.Identifier.ValueText);
-                    return base.VisitClassDeclaration(node);
+                    if (attributes.Any(attribute => attribute.AttributeClass.Name == "BindingAttribute"))// && attribute.AttributeClass.ContainingNamespace.Name == "TechTalk.SpecFlow"))
+                    {
+                        return base.VisitClassDeclaration(node);
+                    }
                 }
 
                 return node;
@@ -70,7 +75,7 @@ namespace ConsoleApplication1
                 var attributes = symbolInfo.GetAttributes();
                 if (attributes.Any(attribute => attribute.AttributeClass.Name == "WhenAttribute"))
                 {
-                    Console.WriteLine("\t" + node.Identifier.ValueText);
+                    this.collector.StepInto(symbolInfo);
                     return base.VisitMethodDeclaration(node);
                 }
 
@@ -81,12 +86,25 @@ namespace ConsoleApplication1
             {
                 if (node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
                 {
+                    TypeInfo? targetTypeInfo = null;
                     var methodInvoked = model.GetSymbolInfo(node);
-                    var location = methodInvoked.Symbol?.Locations.FirstOrDefault(l => l.IsInSource);
-                    if (location != null)
+                    var memberAccessExpressionSyntax = node.Expression as MemberAccessExpressionSyntax;
+                    if (memberAccessExpressionSyntax != null)
                     {
-                        var visitor = new StacktraceCollector(location.SourceTree, methodInvoked.Symbol);
-                        visitor.Visit(location.SourceTree.GetRoot());
+                        targetTypeInfo = model.GetTypeInfo(memberAccessExpressionSyntax.Expression);
+                    }
+
+                    var declaringSyntaxNode = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
+                    if (declaringSyntaxNode != null)
+                    {
+                        collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
+                        var visitor = new StacktraceCollector(declaringSyntaxNode.SyntaxTree, targetTypeInfo, collector);
+                        visitor.Visit(declaringSyntaxNode.GetSyntax());
+                        collector.StepOut();
+                    }
+                    else
+                    {
+                        collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
                     }
                 }
 
@@ -96,29 +114,67 @@ namespace ConsoleApplication1
 
         class StacktraceCollector : CSharpSyntaxRewriter
         {
-            private readonly Compilation compilation;
-            private readonly SyntaxTree tree;
-            private readonly ISymbol entryPoint;
             private readonly SemanticModel model;
+            private readonly TypeInfo? targetType;
+            private readonly IStackTraceCollector collector;
 
-            public StacktraceCollector(SyntaxTree tree, ISymbol entryPoint)
+            public StacktraceCollector(SyntaxTree tree, TypeInfo? targetType, IStackTraceCollector collector)
             {
                 var project = Projects.Keys.FirstOrDefault(p => p.Documents.Any(d => d.FilePath == tree.FilePath));
-                this.compilation = Projects[project].Value;
-                this.tree = tree;
-                this.entryPoint = entryPoint;
-                this.model = this.compilation.GetSemanticModel(this.tree);
+                var compilation = Projects[project].Value;
+                this.model = compilation.GetSemanticModel(tree);
+                this.collector = collector;
+                this.targetType = targetType;
             }
 
-            public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
+            public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                var symbol = this.model.GetDeclaredSymbol(node);
-                if (symbol.ToString() == entryPoint.ToString())
+                if (node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression ||
+                    node.Expression.Kind() == SyntaxKind.InvocationExpression ||
+                    node.Expression.Kind() == SyntaxKind.IdentifierName)
                 {
-                    Console.WriteLine("\t\t" + symbol.ToString());
+                    var methodInvoked = model.GetSymbolInfo(node);
+                    var declaringSyntaxReference = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
+                    if (methodInvoked.Symbol == null)
+                    {
+                        return node;
+                    }
+
+                    if ((methodInvoked.Symbol.IsAbstract || methodInvoked.Symbol.IsVirtual) && targetType.HasValue && declaringSyntaxReference != null)
+                    {
+                        foreach (var member in targetType?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
+                        {
+                            if (member.OverriddenMethod.DeclaringSyntaxReferences[0].Equals(declaringSyntaxReference))
+                            {
+                                collector.StepInto(member);
+                                var visitor = new StacktraceCollector(member.DeclaringSyntaxReferences[0].SyntaxTree, this.targetType, collector);
+                                visitor.Visit(member.DeclaringSyntaxReferences[0].GetSyntax());
+                                collector.StepOut();
+                            }
+                        }
+                    }
+                    else if (declaringSyntaxReference != null)
+                    {
+                        TypeInfo? targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? this.targetType : null;
+                        // TODO Get type of parameter
+                        var memberAccessExpressionSyntax = node.Expression as MemberAccessExpressionSyntax;
+                        if (memberAccessExpressionSyntax != null)
+                        {
+                            targetTypeInfo = model.GetTypeInfo(memberAccessExpressionSyntax.Expression);
+                        }
+
+                        collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
+                        var visitor = new StacktraceCollector(declaringSyntaxReference.SyntaxTree, targetTypeInfo, collector);
+                        visitor.Visit(declaringSyntaxReference.GetSyntax());
+                        collector.StepOut();
+                    }
+                    else
+                    {
+                        collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
+                    }
                 }
 
-                return base.VisitMethodDeclaration(node);
+                return base.VisitInvocationExpression(node);
             }
         }
     }
