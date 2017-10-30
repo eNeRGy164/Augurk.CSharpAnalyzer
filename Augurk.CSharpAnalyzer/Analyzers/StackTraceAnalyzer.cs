@@ -1,27 +1,22 @@
-﻿using Augurk.CSharpAnalyzer.Collectors;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Augurk.CSharpAnalyzer.Analyzers
 {
     public class StackTraceAnalyzer : CSharpSyntaxRewriter
     {
-        private readonly Dictionary<Project, Lazy<Compilation>> projects;
+        private readonly AnalyzeContext context;
         private readonly SemanticModel model;
         private readonly TypeInfo? targetType;
-        private readonly IStackTraceCollector collector;
 
-        public StackTraceAnalyzer(Dictionary<Project, Lazy<Compilation>> projects, SyntaxTree tree, TypeInfo? targetType, IStackTraceCollector collector)
+        public StackTraceAnalyzer(AnalyzeContext context, SyntaxTree tree, TypeInfo? targetType)
         {
-            this.projects = projects;
-            var project = projects.Keys.FirstOrDefault(p => p.Documents.Any(d => d.FilePath == tree.FilePath));
-            var compilation = projects[project].Value;
+            this.context = context;
+            var project = context.Projects.Keys.FirstOrDefault(p => p.Documents.Any(d => d.FilePath == tree.FilePath));
+            var compilation = context.Projects[project].Value;
             this.model = compilation.GetSemanticModel(tree);
-            this.collector = collector;
             this.targetType = targetType;
         }
 
@@ -44,10 +39,10 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     {
                         if (member.OverriddenMethod.DeclaringSyntaxReferences[0].Equals(declaringSyntaxReference))
                         {
-                            collector.StepInto(member);
-                            var visitor = new StackTraceAnalyzer(projects, member.DeclaringSyntaxReferences[0].SyntaxTree, this.targetType, collector);
+                            context.Collector.StepInto(member);
+                            var visitor = new StackTraceAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree, this.targetType);
                             visitor.Visit(member.DeclaringSyntaxReferences[0].GetSyntax());
-                            collector.StepOut();
+                            context.Collector.StepOut();
                         }
                     }
                 }
@@ -61,14 +56,14 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         targetTypeInfo = model.GetTypeInfo(memberAccessExpressionSyntax.Expression);
                     }
 
-                    collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new StackTraceAnalyzer(projects, declaringSyntaxReference.SyntaxTree, targetTypeInfo, collector);
+                    context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
+                    var visitor = new StackTraceAnalyzer(context, declaringSyntaxReference.SyntaxTree, targetTypeInfo);
                     visitor.Visit(declaringSyntaxReference.GetSyntax());
-                    collector.StepOut();
+                    context.Collector.StepOut();
                 }
                 else
                 {
-                    collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
+                    context.Collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
                 }
             }
 

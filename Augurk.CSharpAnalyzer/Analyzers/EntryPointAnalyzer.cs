@@ -11,15 +11,13 @@ namespace Augurk.CSharpAnalyzer
 {
     public class EntryPointAnalyzer : CSharpSyntaxRewriter
     {
-        private readonly Dictionary<Project, Lazy<Compilation>> projects;
+        private readonly AnalyzeContext context;
         private readonly SemanticModel model;
-        private readonly IStackTraceCollector collector;
 
-        public EntryPointAnalyzer(Dictionary<Project, Lazy<Compilation>> projects, SemanticModel model, IStackTraceCollector collector)
+        public EntryPointAnalyzer(AnalyzeContext context, SemanticModel model)
         {
-            this.projects = projects;
+            this.context = context;
             this.model = model;
-            this.collector = collector;
         }
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
@@ -45,7 +43,7 @@ namespace Augurk.CSharpAnalyzer
             var attributes = symbolInfo.GetAttributes();
             if (attributes.Any(attribute => attribute.AttributeClass.Name == "WhenAttribute"))
             {
-                this.collector.StepInto(symbolInfo);
+                this.context.Collector.StepInto(symbolInfo);
                 return base.VisitMethodDeclaration(node);
             }
 
@@ -67,14 +65,14 @@ namespace Augurk.CSharpAnalyzer
                 var declaringSyntaxNode = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
                 if (declaringSyntaxNode != null)
                 {
-                    collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new StackTraceAnalyzer(projects, declaringSyntaxNode.SyntaxTree, targetTypeInfo, collector);
+                    this.context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
+                    var visitor = new StackTraceAnalyzer(context, declaringSyntaxNode.SyntaxTree, targetTypeInfo);
                     visitor.Visit(declaringSyntaxNode.GetSyntax());
-                    collector.StepOut();
+                    this.context.Collector.StepOut();
                 }
                 else
                 {
-                    collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
+                    this.context.Collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
                 }
             }
 

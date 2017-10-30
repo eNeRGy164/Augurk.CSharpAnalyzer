@@ -1,4 +1,5 @@
-﻿using Augurk.CSharpAnalyzer.Collectors;
+﻿using Augurk.CSharpAnalyzer.Analyzers;
+using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -41,10 +42,10 @@ namespace Augurk.CSharpAnalyzer.Commands
             var specProject = solution.Projects.FirstOrDefault(p => p.Name == options.SpecificationsProject);
             var compilation = projects[specProject].Value;
 
-            IStackTraceCollector collector = new ConsoleStrackTraceCollector();
+            var context = new AnalyzeContext(projects, new ConsoleStrackTraceCollector(), options);
             foreach (var tree in compilation.SyntaxTrees)
             {
-                var visitor = new EntryPointAnalyzer(projects, compilation.GetSemanticModel(tree), collector);
+                var visitor = new EntryPointAnalyzer(context, compilation.GetSemanticModel(tree));
                 visitor.Visit(tree.GetRoot());
             }
         }
