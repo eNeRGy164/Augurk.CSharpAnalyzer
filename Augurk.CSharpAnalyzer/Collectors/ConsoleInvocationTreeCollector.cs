@@ -26,6 +26,11 @@ namespace Augurk.CSharpAnalyzer.Collectors
     {
         private int indent;
 
+        public bool IsAlreadyCollected(IMethodSymbol method)
+        {
+            return false;
+        }
+
         /// <summary>
         /// Called when a method is being stepped into.
         /// </summary>
@@ -52,5 +57,7 @@ namespace Augurk.CSharpAnalyzer.Collectors
         {
             ConsoleWriter.WriteWithIndent(ConsoleColor.DarkGray, indent, $"{method.ToString()}");
         }
+
+        
     }
 }

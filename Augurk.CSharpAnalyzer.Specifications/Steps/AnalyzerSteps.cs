@@ -5,7 +5,6 @@ using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TechTalk.SpecFlow;
-using Augurk.CSharpAnalyzer.Specifications.Support;
 
 namespace Augurk.CSharpAnalyzer.Specifications.Steps
 {
