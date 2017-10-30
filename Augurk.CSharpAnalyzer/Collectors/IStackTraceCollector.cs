@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Augurk.CSharpAnalyzer
+namespace Augurk.CSharpAnalyzer.Collectors
 {
     public interface IStackTraceCollector
     {

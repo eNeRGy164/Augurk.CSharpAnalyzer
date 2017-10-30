@@ -1,4 +1,5 @@
-﻿using Augurk.CSharpAnalyzer.Options;
+﻿using Augurk.CSharpAnalyzer.Collectors;
+using Augurk.CSharpAnalyzer.Options;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using Oakton;

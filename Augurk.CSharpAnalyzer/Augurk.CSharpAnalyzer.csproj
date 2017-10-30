@@ -101,9 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AnalyzeCommand.cs" />
-    <Compile Include="ConsoleStrackTraceCollector.cs" />
+    <Compile Include="Collectors\ConsoleStrackTraceCollector.cs" />
     <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
-    <Compile Include="IStackTraceCollector.cs" />
+    <Compile Include="Collectors\IStackTraceCollector.cs" />
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
