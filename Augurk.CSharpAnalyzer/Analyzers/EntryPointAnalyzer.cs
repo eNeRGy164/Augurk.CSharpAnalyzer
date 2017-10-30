@@ -29,6 +29,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
     {
         private readonly AnalyzeContext context;
         private readonly SemanticModel model;
+        private bool insideEntryPoint;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntryPointAnalyzer"/> class.
@@ -75,16 +76,12 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             // Check for the presence of a WhenAttribute (we assume that SpecFlow is being used here)
             if (attributes.Any(attribute => attribute.AttributeClass.Name == "WhenAttribute" && attribute.AttributeClass.ContainingNamespace.Name == "SpecFlow"))
             {
-                // TODO Remove this if
-                if (!symbolInfo.Name.Contains("WhenBalanceIncreasesModuleIsBeingExecutedForTheWeek"))
-                {
-                    return node;
-                }
-                
                 // A method with a [WhenAttribute] is of interest, let's dig deeper
+                this.insideEntryPoint = true;
                 context.Collector.StepInto(symbolInfo);
                 var result = base.VisitMethodDeclaration(node);
                 context.Collector.StepOut();
+                this.insideEntryPoint = false;
                 return result;
             }
 
@@ -99,7 +96,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             // Determine the kind of invocation
-            if (node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
+            if (insideEntryPoint && node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
             {
                 // Find the method that is being invoked and the type on which it is invoked
                 SymbolInfo methodInvoked = model.GetSymbolInfo(node);
