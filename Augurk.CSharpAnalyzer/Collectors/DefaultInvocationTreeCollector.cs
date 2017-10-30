@@ -14,8 +14,12 @@
  limitations under the License.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json.Linq;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
@@ -27,12 +31,6 @@ namespace Augurk.CSharpAnalyzer.Collectors
 
         public bool IsAlreadyCollected(IMethodSymbol method)
         {
-            //SyntaxReference syntax = method.GetComparableSyntax();
-            //if(syntax == null)
-            //{
-            //    return false;
-            //}
-
             return _wrappers.ContainsKey(method);
         }
 
@@ -62,10 +60,42 @@ namespace Augurk.CSharpAnalyzer.Collectors
             Step(method);
         }
 
+        public JToken GetJsonOutput()
+        {
+            return GetJsonOutput(_invocations);
+        }
+
+        private JToken GetJsonOutput(IEnumerable<MethodWrapper> invocations)
+        {
+            var output = new JArray();
+
+            foreach (var invocation in invocations)
+            {
+                var jInvocation = new JObject();
+
+                if (invocation.RegularExpressions.Length > 0)
+                {
+                    jInvocation.Add("Kind", "When");
+                    jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
+                    jInvocation.Add("RegularExpressions", new JArray(invocation.RegularExpressions));
+                    jInvocation.Add("Invocations", GetJsonOutput(invocation.Invocations));
+                }
+                else
+                {
+                    jInvocation.Add("Kind", "Dunno");
+                    jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
+                    jInvocation.Add("Invocations", GetJsonOutput(invocation.Invocations));
+
+                }
+
+                output.Add(jInvocation);
+            }
+
+            return output;
+        }
+
         private MethodWrapper Step(IMethodSymbol method)
         {
-            //SyntaxReference syntax = method.GetComparableSyntax();
-
             // Try to find a wrapper; otherwise, create one
             MethodWrapper wrapper;
             if (!_wrappers.TryGetValue(method, out wrapper))
@@ -88,12 +118,29 @@ namespace Augurk.CSharpAnalyzer.Collectors
 
         private class MethodWrapper
         {
-            private IMethodSymbol _method;
+            public IMethodSymbol Method { get; }
+
             public List<MethodWrapper> Invocations { get; } = new List<MethodWrapper>(); 
+
+            public ImmutableArray<string> RegularExpressions { get; }
 
             public MethodWrapper(IMethodSymbol method)
             {
-                _method = method;
+                Method = method;
+
+                RegularExpressions = GetRegularExpressions();
+            }
+
+            private ImmutableArray<string> GetRegularExpressions()
+            {
+                return Method.GetAttributes()
+                           .Where(attribute => attribute.AttributeClass.Name.EndsWith("WhenAttribute")
+                                            && (attribute.ConstructorArguments.Length > 0
+                                            || attribute.NamedArguments.Any(na => na.Key == "Regex")))
+                           .Select(attribute => 
+                                attribute.NamedArguments.FirstOrDefault(na => na.Key =="Regex").Value.Value?.ToString() ?? 
+                                attribute.ConstructorArguments.First().Value.ToString())
+                           .ToImmutableArray();
             }
         }
     }

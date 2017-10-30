@@ -4,8 +4,8 @@ using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Converters;
 using TechTalk.SpecFlow;
-using Augurk.CSharpAnalyzer.Specifications.Support;
 
 namespace Augurk.CSharpAnalyzer.Specifications.Steps
 {
@@ -37,12 +37,34 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             options.SystemUnderTest = _sutProject;
 
             var command = new AnalyzeCommand();
-            command.Collector = new DefaultInvocationTreeCollector();
+            var collector = new DefaultInvocationTreeCollector();
+            command.Collector = collector;
 
             bool result = command.Execute(options);
             Assert.IsTrue(result, "An error occured during analysis.");
+
+            string resultingJson = collector.GetJsonOutput().ToString();
         }
-        
+
+        [When()]
+        [When(Culture="en-en", Regex=@"a third analysis is run")]
+        public void WhenAnotherAnalysisIsRun()
+        {
+            var options = new AnalyzeOptions();
+            options.Solution = _solution;
+            options.SpecificationsProject = _targetProject;
+            options.SystemUnderTest = _sutProject;
+
+            var command = new AnalyzeCommand();
+            var collector = new DefaultInvocationTreeCollector();
+            command.Collector = collector;
+
+            bool result = command.Execute(options);
+            Assert.IsTrue(result, "An error occured during analysis.");
+
+            string resultingJson = collector.GetJsonOutput().ToString();
+        }
+
         [Then(@"the following report is returned for '(.*)'")]
         public void ThenTheFollowingReportIsReturnedFor(string projectName, Table table)
         {
