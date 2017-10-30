@@ -15,38 +15,37 @@
 */
 
 using System;
-using Microsoft.CodeAnalysis;
 
-namespace Augurk.CSharpAnalyzer.Extensions
+namespace Microsoft.CodeAnalysis
 {
     /// <summary>
-    /// Contains extension methods for the <see cref="IMethodSymbol"/> type.
+    /// Contains extension methods for the <see cref="ISymbol"/> interface.
     /// </summary>
-    public static class MethodSymbolExtensions
+    public static class SymbolExtensions
     {
         /// <summary>
-        /// Gets the comparable sytax for the provided method symbol.
+        /// Gets the comparable sytax for the provided symbol.
         /// </summary>
-        /// <param name="methodSymbol">
+        /// <param name="symbol">
         /// The <see cref="IMethodSymbol"/> instance for which the comparable syntax should be retrieved.
         /// </param>
         /// <returns>
         /// The <see cref="SyntaxReference"/> for the provided symbol if available; otherwise, <c>null</c>
         /// </returns>
-        public static SyntaxReference GetComparableSyntax(this IMethodSymbol methodSymbol)
+        public static SyntaxReference GetComparableSyntax(this ISymbol symbol)
         {
-            if (methodSymbol.DeclaringSyntaxReferences.Length > 1)
+            if (symbol.DeclaringSyntaxReferences.Length > 1)
             {
-                throw new NotSupportedException($"Method \"{methodSymbol}\" has more than one (1) declaration. " +
+                throw new NotSupportedException($"Symbol \"{symbol}\" has more than one (1) declaration. " +
                                                 $"The Augurk CSharpAnalyzer was not designed to handle this scenario.");
             }
 
-            if (methodSymbol.DeclaringSyntaxReferences.Length == 0)
+            if (symbol.DeclaringSyntaxReferences.Length == 0)
             {
                 return null;
             }
 
-            return methodSymbol.DeclaringSyntaxReferences[0];
+            return symbol.DeclaringSyntaxReferences[0];
         }
     }
 }

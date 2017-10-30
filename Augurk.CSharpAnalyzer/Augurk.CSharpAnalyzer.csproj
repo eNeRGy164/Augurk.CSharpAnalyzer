@@ -107,7 +107,7 @@
     <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="Collectors\IInvocationTreeCollector.cs" />
     <Compile Include="Extensions\InvocationExpressionSyntaxExtensions.cs" />
-    <Compile Include="Extensions\MethodSymbolExtensions.cs" />
+    <Compile Include="Extensions\SymbolExtensions.cs" />
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
