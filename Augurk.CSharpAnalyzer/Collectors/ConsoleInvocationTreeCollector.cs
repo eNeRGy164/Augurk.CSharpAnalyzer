@@ -13,28 +13,44 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
+using System;
 using Microsoft.CodeAnalysis;
+using Oakton;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
     /// <summary>
-    /// Describes the interface for a stack trace collector.
+    /// An <see cref="IInvocationTreeCollector"/> implementation that writes the output to the console.
     /// </summary>
-    public interface IStackTraceCollector
+    public class ConsoleInvocationTreeCollector : IInvocationTreeCollector
     {
+        private int indent;
+
         /// <summary>
         /// Called when a method is being stepped into.
         /// </summary>
-        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped into.</param>
-        void StepInto(IMethodSymbol method);
+        /// <param name="method">Method that is being stepped into.</param>
+        public void StepInto(IMethodSymbol method)
+        {
+            ConsoleWriter.WriteWithIndent(method.IsOverride ? ConsoleColor.Green : ConsoleColor.White, indent, $"{method.ToString()}");
+            indent++;
+        }
+
         /// <summary>
         /// Called when a method is being stepped out of.
         /// </summary>
-        void StepOut();
+        public void StepOut()
+        {
+            indent--;
+        }
+
         /// <summary>
         /// Called when a method is being stepped over.
         /// </summary>
-        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped over.</param>
-        void StepOver(IMethodSymbol method);
+        /// <param name="method">Method that is being stepped over.</param>
+        public void StepOver(IMethodSymbol method)
+        {
+            ConsoleWriter.WriteWithIndent(ConsoleColor.DarkGray, indent, $"{method.ToString()}");
+        }
     }
 }

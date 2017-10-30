@@ -4,6 +4,7 @@ using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TechTalk.SpecFlow;
+using Augurk.CSharpAnalyzer.Specifications.Support;
 
 namespace Augurk.CSharpAnalyzer.Specifications.Steps
 {
@@ -29,13 +30,14 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         [When(@"an analysis is run")]
         public void WhenAnAnalysisIsRun()
         {
-
             var options = new AnalyzeOptions();
             options.Solution = _solution;
             options.SpecificationsProject = _targetProject;
             options.SystemUnderTest = _sutProject;
 
             var command = new AnalyzeCommand();
+            command.Collector = new TestInvocationTreeCollector();
+
             bool result = command.Execute(options);
             Assert.IsTrue(result, "An error occured during analysis.");
         }

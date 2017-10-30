@@ -13,44 +13,28 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-using System;
 using Microsoft.CodeAnalysis;
-using Oakton;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
     /// <summary>
-    /// An <see cref="IStackTraceCollector"/> implementation that writes the output to the console.
+    /// Describes the interface for an invocation tree collector.
     /// </summary>
-    public class ConsoleStackTraceCollector : IStackTraceCollector
+    public interface IInvocationTreeCollector
     {
-        private int indent;
-
         /// <summary>
         /// Called when a method is being stepped into.
         /// </summary>
-        /// <param name="method">Method that is being stepped into.</param>
-        public void StepInto(IMethodSymbol method)
-        {
-            ConsoleWriter.WriteWithIndent(method.IsOverride ? ConsoleColor.Green : ConsoleColor.White, indent, $"{method.ToString()}");
-            indent++;
-        }
-
+        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped into.</param>
+        void StepInto(IMethodSymbol method);
         /// <summary>
         /// Called when a method is being stepped out of.
         /// </summary>
-        public void StepOut()
-        {
-            indent--;
-        }
-
+        void StepOut();
         /// <summary>
         /// Called when a method is being stepped over.
         /// </summary>
-        /// <param name="method">Method that is being stepped over.</param>
-        public void StepOver(IMethodSymbol method)
-        {
-            ConsoleWriter.WriteWithIndent(ConsoleColor.DarkGray, indent, $"{method.ToString()}");
-        }
+        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped over.</param>
+        void StepOver(IMethodSymbol method);
     }
 }

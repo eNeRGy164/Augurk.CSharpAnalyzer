@@ -37,13 +37,13 @@ namespace Augurk.CSharpAnalyzer.Commands
         /// </summary>
         public AnalyzeCommand()
         {
-            Collector = new ConsoleStackTraceCollector();
+            Collector = new ConsoleInvocationTreeCollector();
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="IStackTraceCollector"/> implementation to use during execution of this command.
+        /// Gets or sets the <see cref="IInvocationTreeCollector"/> implementation to use during execution of this command.
         /// </summary>
-        public IStackTraceCollector Collector
+        public IInvocationTreeCollector Collector
         {
             get;
             set;
