@@ -22,7 +22,7 @@ namespace Augurk.CSharpAnalyzer.Collectors
     /// <summary>
     /// An <see cref="IStackTraceCollector"/> implementation that writes the output to the console.
     /// </summary>
-    public class ConsoleStrackTraceCollector : IStackTraceCollector
+    public class ConsoleStackTraceCollector : IStackTraceCollector
     {
         private int indent;
 

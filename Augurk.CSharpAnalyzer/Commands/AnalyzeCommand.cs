@@ -33,6 +33,23 @@ namespace Augurk.CSharpAnalyzer.Commands
     public class AnalyzeCommand : OaktonCommand<AnalyzeOptions>
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="AnalyzeCommand"/>.
+        /// </summary>
+        public AnalyzeCommand()
+        {
+            Collector = new ConsoleStackTraceCollector();
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="IStackTraceCollector"/> implementation to use during execution of this command.
+        /// </summary>
+        public IStackTraceCollector Collector
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Called when the command is being executed.
         /// </summary>
         /// <param name="input">An <see cref="AnalyzeOptions"/> containing the options passed to the command.</param>
@@ -46,7 +63,7 @@ namespace Augurk.CSharpAnalyzer.Commands
                 ConsoleWriter.Write(ConsoleColor.White, $"Analysis succesful for solution {input.Solution}");
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ConsoleWriter.Write(ConsoleColor.Red, $"Analysis failed for solution {input.Solution}");
                 return false;
@@ -75,7 +92,7 @@ namespace Augurk.CSharpAnalyzer.Commands
             var compilation = projects[specProject].Value;
 
             // Build the analysis context and go through each syntax tree
-            var context = new AnalyzeContext(projects, new ConsoleStrackTraceCollector(), options);
+            var context = new AnalyzeContext(projects, Collector, options);
             foreach (var tree in compilation.SyntaxTrees)
             {
                 // Find entry-points 
