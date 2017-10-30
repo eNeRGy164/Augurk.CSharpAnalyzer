@@ -20,7 +20,7 @@ namespace Augurk.CSharpAnalyzer.Commands
                 Analyze(input).Wait();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
