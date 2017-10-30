@@ -127,7 +127,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\AnalyzerSteps.cs" />
-    <Compile Include="Support\TestInvocationTreeCollector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

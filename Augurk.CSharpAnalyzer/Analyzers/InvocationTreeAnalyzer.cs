@@ -64,22 +64,30 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 node.Expression.Kind() == SyntaxKind.IdentifierName)
             {
                 // Check if the method being invoked is defined in source
-                var methodInvoked = model.GetSymbolInfo(node);
-                var declaringSyntaxReference = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
-                if (methodInvoked.Symbol == null)
+                IMethodSymbol methodInvoked = model.GetSymbolInfo(node).Symbol as IMethodSymbol;
+                SyntaxReference declaringSyntaxReference = methodInvoked.GetComparableSyntax();
+                if (methodInvoked == null)
                 {
                     return node;
                 }
 
                 // Check if the method being invoked is abstract or virtual
-                if ((methodInvoked.Symbol.IsAbstract || methodInvoked.Symbol.IsVirtual) && targetType.HasValue && declaringSyntaxReference != null)
+                if ((methodInvoked.IsAbstract || methodInvoked.IsVirtual) && targetType.HasValue && declaringSyntaxReference != null)
                 {
                     // Find the members of the type on which the current method is being invoked that are defined as an override
                     foreach (var member in targetType?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
                     {
                         // Check if the current member is the abstract/virtual method being invoked
-                        if (member.OverriddenMethod.DeclaringSyntaxReferences[0].Equals(declaringSyntaxReference))
+                        if (member.OverriddenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
                         {
+                            // If the member has previously been collected
+                            if (context.Collector.IsAlreadyCollected(member))
+                            {
+                                // Step over it and continue
+                                context.Collector.StepOver(member);
+                                continue;
+                            }
+
                             // Step into the abstract call
                             context.Collector.StepInto(member);
                             var argumentTypes = node.GetArgumentTypes(member, model);
@@ -89,11 +97,11 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         }
                     }
                 }
-                else if (declaringSyntaxReference != null)
+                else if (declaringSyntaxReference != null && !context.Collector.IsAlreadyCollected(methodInvoked))
                 {
                     // Step into the method being invoked
                     var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
-                    var argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model).ToList();
+                    var argumentTypes = node.GetArgumentTypes(methodInvoked, model).ToList();
                     if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
                     {
                         var memberAccess = node.Expression as MemberAccessExpressionSyntax;
@@ -107,15 +115,15 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         }
                     }
 
-                    context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree, methodInvoked.Symbol as IMethodSymbol, targetTypeInfo, argumentTypes);
+                    context.Collector.StepInto(methodInvoked);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree, methodInvoked, targetTypeInfo, argumentTypes);
                     visitor.Visit(declaringSyntaxReference.GetSyntax());
                     context.Collector.StepOut();
                 }
                 else
                 {
-                    // Target method is not defined in source, so trace it but do not step into it
-                    context.Collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
+                    // Target method is not defined in source, or has been previously collected, so trace it but do not step into it
+                    context.Collector.StepOver(methodInvoked);
                 }
             }
 

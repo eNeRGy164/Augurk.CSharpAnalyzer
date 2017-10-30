@@ -36,5 +36,11 @@ namespace Augurk.CSharpAnalyzer.Collectors
         /// </summary>
         /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped over.</param>
         void StepOver(IMethodSymbol method);
+        /// <summary>
+        /// Determines if the provided <paramref name="method"/> has already been collected previously.
+        /// </summary>
+        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method to check for.</param>
+        /// <returns>Returns <c>true</c> if the method has previously been collected, otherwise <c>false</c>.</returns>
+        bool IsAlreadyCollected(IMethodSymbol method);
     }
 }

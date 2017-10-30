@@ -99,24 +99,24 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             if (insideEntryPoint && node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
             {
                 // Find the method that is being invoked and the type on which it is invoked
-                SymbolInfo methodInvoked = model.GetSymbolInfo(node);
+                IMethodSymbol methodInvoked = model.GetSymbolInfo(node).Symbol as IMethodSymbol;
                 TypeInfo? targetTypeInfo = node.GetTargetType(model);
-                IEnumerable<TypeInfo?> argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model);
+                IEnumerable<TypeInfo?> argumentTypes = node.GetArgumentTypes(methodInvoked, model);
 
                 // Find the source location of the method being invoked
-                SyntaxReference declaringSyntaxNode = methodInvoked.Symbol?.GetComparableSyntax();
-                if (declaringSyntaxNode != null)
+                SyntaxReference declaringSyntaxNode = methodInvoked.GetComparableSyntax();
+                if (declaringSyntaxNode != null && !context.Collector.IsAlreadyCollected(methodInvoked))
                 {
                     // Method being invoked is defined in source, so dig deeper
-                    context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, methodInvoked.Symbol as IMethodSymbol, targetTypeInfo, argumentTypes);
+                    context.Collector.StepInto(methodInvoked);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, methodInvoked, targetTypeInfo, argumentTypes);
                     visitor.Visit(declaringSyntaxNode.GetSyntax());
                     context.Collector.StepOut();
                 }
                 else
                 {
-                    // Method being invoked is not defined in source, trace it but don't go deeper
-                    context.Collector.StepOver(methodInvoked.Symbol as IMethodSymbol);
+                    // Method being invoked is not defined in source, or has already been collected, trace it but don't go deeper
+                    context.Collector.StepOver(methodInvoked);
                 }
             }
 
