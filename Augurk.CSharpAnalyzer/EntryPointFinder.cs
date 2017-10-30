@@ -1,20 +1,24 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Augurk.CSharpAnalyzer
 {
     public class EntryPointFinder : CSharpSyntaxRewriter
     {
-        public EntryPointFinder(SemanticModel model, IStackTraceCollector collector)
+        private readonly Dictionary<Project, Lazy<Compilation>> projects;
+        private readonly SemanticModel model;
+        private readonly IStackTraceCollector collector;
+
+        public EntryPointFinder(Dictionary<Project, Lazy<Compilation>> projects, SemanticModel model, IStackTraceCollector collector)
         {
+            this.projects = projects;
             this.model = model;
             this.collector = collector;
         }
-
-        private readonly SemanticModel model;
-        private readonly IStackTraceCollector collector;
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
@@ -62,7 +66,7 @@ namespace Augurk.CSharpAnalyzer
                 if (declaringSyntaxNode != null)
                 {
                     collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new StacktraceCollector(declaringSyntaxNode.SyntaxTree, targetTypeInfo, collector);
+                    var visitor = new StackTraceAnalyzer(projects, declaringSyntaxNode.SyntaxTree, targetTypeInfo, collector);
                     visitor.Visit(declaringSyntaxNode.GetSyntax());
                     collector.StepOut();
                 }
