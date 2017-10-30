@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Augurk.CSharpAnalyzer
+namespace Augurk.CSharpAnalyzer.Analyzers
 {
     public class StackTraceAnalyzer : CSharpSyntaxRewriter
     {

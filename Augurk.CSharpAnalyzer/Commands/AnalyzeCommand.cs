@@ -43,7 +43,7 @@ namespace Augurk.CSharpAnalyzer.Commands
             IStackTraceCollector collector = new ConsoleStrackTraceCollector();
             foreach (var tree in compilation.SyntaxTrees)
             {
-                var visitor = new EntryPointFinder(projects, compilation.GetSemanticModel(tree), collector);
+                var visitor = new EntryPointAnalyzer(projects, compilation.GetSemanticModel(tree), collector);
                 visitor.Visit(tree.GetRoot());
             }
         }

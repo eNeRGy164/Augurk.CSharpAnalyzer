@@ -102,12 +102,12 @@
   <ItemGroup>
     <Compile Include="Commands\AnalyzeCommand.cs" />
     <Compile Include="ConsoleStrackTraceCollector.cs" />
-    <Compile Include="EntryPointFinder.cs" />
+    <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="IStackTraceCollector.cs" />
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StackTraceAnalyzer.cs" />
+    <Compile Include="Analyzers\StackTraceAnalyzer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

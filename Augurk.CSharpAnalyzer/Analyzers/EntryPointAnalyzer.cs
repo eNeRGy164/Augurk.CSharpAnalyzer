@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Augurk.CSharpAnalyzer.Analyzers;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -7,13 +8,13 @@ using System.Linq;
 
 namespace Augurk.CSharpAnalyzer
 {
-    public class EntryPointFinder : CSharpSyntaxRewriter
+    public class EntryPointAnalyzer : CSharpSyntaxRewriter
     {
         private readonly Dictionary<Project, Lazy<Compilation>> projects;
         private readonly SemanticModel model;
         private readonly IStackTraceCollector collector;
 
-        public EntryPointFinder(Dictionary<Project, Lazy<Compilation>> projects, SemanticModel model, IStackTraceCollector collector)
+        public EntryPointAnalyzer(Dictionary<Project, Lazy<Compilation>> projects, SemanticModel model, IStackTraceCollector collector)
         {
             this.projects = projects;
             this.model = model;
