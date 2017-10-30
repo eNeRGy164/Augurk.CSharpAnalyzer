@@ -20,11 +20,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Augurk.CSharpAnalyzer")]
-[assembly: AssemblyDescription("An Augurk utility that analyzes your C# feature-automation and summarizes it for further processing in a hosted Augurk-instance.")]
+[assembly: AssemblyTitle("Augurk.CSharpAnalyzer.Specifications")]
+[assembly: AssemblyDescription("Specifications for the Augurk.CSharpAnalyzer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("https://github.org/Augurk")]
-[assembly: AssemblyProduct("Augurk.CSharpAnalyzer")]
+[assembly: AssemblyProduct("Augurk.CSharpAnalyzer.Specifications")]
 [assembly: AssemblyCopyright("Copyright © 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
