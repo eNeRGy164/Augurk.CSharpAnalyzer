@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace ConsoleApplication1
+namespace Augurk.CSharpAnalyzer
 {
     public class ConsoleStrackTraceCollector : IStackTraceCollector
     {

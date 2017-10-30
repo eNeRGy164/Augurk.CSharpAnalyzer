@@ -10,8 +10,8 @@
     <ProjectGuid>{B77297B5-002F-498C-9788-23758E82A66D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConsoleApplication1</RootNamespace>
-    <AssemblyName>ConsoleApplication1</AssemblyName>
+    <RootNamespace>Augurk.CSharpAnalyzer</RootNamespace>
+    <AssemblyName>Augurk.CSharpAnalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -95,9 +95,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleStrackTraceCollector.cs" />
+    <Compile Include="EntryPointFinder.cs" />
     <Compile Include="IStackTraceCollector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StackTraceAnalyzer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
