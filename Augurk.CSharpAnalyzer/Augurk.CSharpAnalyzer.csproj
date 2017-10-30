@@ -101,11 +101,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzers\AnalyzeContext.cs" />
+    <Compile Include="Collectors\DefaultInvocationTreeCollector.cs" />
     <Compile Include="Commands\AnalyzeCommand.cs" />
     <Compile Include="Collectors\ConsoleInvocationTreeCollector.cs" />
     <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="Collectors\IInvocationTreeCollector.cs" />
     <Compile Include="Extensions\InvocationExpressionSyntaxExtensions.cs" />
+    <Compile Include="Extensions\MethodSymbolExtensions.cs" />
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
