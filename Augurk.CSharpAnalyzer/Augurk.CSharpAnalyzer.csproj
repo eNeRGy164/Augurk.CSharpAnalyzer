@@ -109,7 +109,7 @@
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Analyzers\StackTraceAnalyzer.cs" />
+    <Compile Include="Analyzers\InvocationTreeAnalyzer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -102,7 +102,7 @@ namespace Augurk.CSharpAnalyzer
                 {
                     // Method being invoked is defined in source, so dig deeper
                     context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new StackTraceAnalyzer(context, declaringSyntaxNode.SyntaxTree, targetTypeInfo);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, targetTypeInfo);
                     visitor.Visit(declaringSyntaxNode.GetSyntax());
                     context.Collector.StepOut();
                 }

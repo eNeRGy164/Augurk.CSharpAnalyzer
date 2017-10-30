@@ -23,19 +23,19 @@ namespace Augurk.CSharpAnalyzer.Analyzers
     /// <summary>
     /// Analyzes CSharp code of a method being invoked on a particular type to find other invocations.
     /// </summary>
-    public class StackTraceAnalyzer : CSharpSyntaxRewriter
+    public class InvocationTreeAnalyzer : CSharpSyntaxRewriter
     {
         private readonly AnalyzeContext context;
         private readonly SemanticModel model;
         private readonly TypeInfo? targetType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StackTraceAnalyzer"/> class.
+        /// Initializes a new instance of the <see cref="InvocationTreeAnalyzer"/> class.
         /// </summary>
         /// <param name="context">The <see cref="AnalyzeContext"/> tracking information regarding the analysis.</param>
         /// <param name="tree">A <see cref="SyntaxTree"/> that needs to be analyzed.</param>
         /// <param name="targetType">Type on which the method being analyzed here is invoked.</param>
-        public StackTraceAnalyzer(AnalyzeContext context, SyntaxTree tree, TypeInfo? targetType)
+        public InvocationTreeAnalyzer(AnalyzeContext context, SyntaxTree tree, TypeInfo? targetType)
         {
             this.context = context;
             var project = context.Projects.Keys.FirstOrDefault(p => p.Documents.Any(d => d.FilePath == tree.FilePath));
@@ -74,7 +74,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         {
                             // Step into the abstract call
                             context.Collector.StepInto(member);
-                            var visitor = new StackTraceAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree, targetType);
+                            var visitor = new InvocationTreeAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree, targetType);
                             visitor.Visit(member.DeclaringSyntaxReferences[0].GetSyntax());
                             context.Collector.StepOut();
                         }
@@ -86,7 +86,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     // Step into the method being invoked
                     var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
                     context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new StackTraceAnalyzer(context, declaringSyntaxReference.SyntaxTree, targetTypeInfo);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree, targetTypeInfo);
                     visitor.Visit(declaringSyntaxReference.GetSyntax());
                     context.Collector.StepOut();
                 }
