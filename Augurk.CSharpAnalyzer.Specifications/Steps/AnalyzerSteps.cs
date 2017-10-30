@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -36,7 +37,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             options.SystemUnderTest = _sutProject;
 
             var command = new AnalyzeCommand();
-            command.Collector = new TestInvocationTreeCollector();
+            command.Collector = new DefaultInvocationTreeCollector();
 
             bool result = command.Execute(options);
             Assert.IsTrue(result, "An error occured during analysis.");

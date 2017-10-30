@@ -13,13 +13,14 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-using Augurk.CSharpAnalyzer.Analyzers;
+
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
+using System.Collections.Generic;
 
-namespace Augurk.CSharpAnalyzer
+namespace Augurk.CSharpAnalyzer.Analyzers
 {
     /// <summary>
     /// Analyzes CSharp code of a specifications project in order to find entry points for a particular feature (ie. When steps).
@@ -101,12 +102,12 @@ namespace Augurk.CSharpAnalyzer
             if (node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
             {
                 // Find the method that is being invoked and the type on which it is invoked
-                var methodInvoked = model.GetSymbolInfo(node);
-                var targetTypeInfo = node.GetTargetType(model);
-                var argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model);
+                SymbolInfo methodInvoked = model.GetSymbolInfo(node);
+                TypeInfo? targetTypeInfo = node.GetTargetType(model);
+                IEnumerable<TypeInfo?> argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model);
 
                 // Find the source location of the method being invoked
-                var declaringSyntaxNode = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
+                SyntaxReference declaringSyntaxNode = methodInvoked.Symbol?.GetComparableSyntax();
                 if (declaringSyntaxNode != null)
                 {
                     // Method being invoked is defined in source, so dig deeper
