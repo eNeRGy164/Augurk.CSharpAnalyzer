@@ -17,7 +17,12 @@ namespace ConsoleApplication1
     {
         static readonly Dictionary<Project, Lazy<Compilation>> Projects = new Dictionary<Project, Lazy<Compilation>>();
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
+        {
+            PrivateMain(args).Wait();
+        }
+
+        private static async Task PrivateMain(string[] args)
         {
             var workspace = MSBuildWorkspace.Create();
             var solution = await workspace.OpenSolutionAsync(@"C:\Projects\De Vries\DeVries.WMS.Regulations\DeVries.WMS.Regulations.sln");
