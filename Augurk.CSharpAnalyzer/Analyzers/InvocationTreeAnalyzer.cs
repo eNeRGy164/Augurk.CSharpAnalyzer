@@ -16,6 +16,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Augurk.CSharpAnalyzer.Analyzers
@@ -27,7 +29,9 @@ namespace Augurk.CSharpAnalyzer.Analyzers
     {
         private readonly AnalyzeContext context;
         private readonly SemanticModel model;
+        private readonly IMethodSymbol methodAnalyzed;
         private readonly TypeInfo? targetType;
+        private readonly IEnumerable<TypeInfo?> argumentTypes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvocationTreeAnalyzer"/> class.
@@ -35,13 +39,17 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// <param name="context">The <see cref="AnalyzeContext"/> tracking information regarding the analysis.</param>
         /// <param name="tree">A <see cref="SyntaxTree"/> that needs to be analyzed.</param>
         /// <param name="targetType">Type on which the method being analyzed here is invoked.</param>
-        public InvocationTreeAnalyzer(AnalyzeContext context, SyntaxTree tree, TypeInfo? targetType)
+        /// <param name="methodAnalyzed">The <see cref="IMethodSymbol"/> representing the method being invoked.</param>
+        /// <param name="argumentTypes">Types of the argument passed to the method being analyzed here.</param>
+        public InvocationTreeAnalyzer(AnalyzeContext context, SyntaxTree tree, IMethodSymbol methodAnalyzed, TypeInfo? targetType, IEnumerable<TypeInfo?> argumentTypes)
         {
             this.context = context;
             var project = context.Projects.Keys.FirstOrDefault(p => p.Documents.Any(d => d.FilePath == tree.FilePath));
             var compilation = context.Projects[project].Value;
             this.model = compilation.GetSemanticModel(tree);
+            this.methodAnalyzed = methodAnalyzed;
             this.targetType = targetType;
+            this.argumentTypes = argumentTypes;
         }
 
         /// <summary>
@@ -74,7 +82,8 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         {
                             // Step into the abstract call
                             context.Collector.StepInto(member);
-                            var visitor = new InvocationTreeAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree, targetType);
+                            var argumentTypes = node.GetArgumentTypes(member, model);
+                            var visitor = new InvocationTreeAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree, member, targetType, argumentTypes);
                             visitor.Visit(member.DeclaringSyntaxReferences[0].GetSyntax());
                             context.Collector.StepOut();
                         }
@@ -82,11 +91,24 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 }
                 else if (declaringSyntaxReference != null)
                 {
-                    // TODO Get type of parameter
                     // Step into the method being invoked
                     var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
+                    var argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model).ToList();
+                    if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
+                    {
+                        var memberAccess = node.Expression as MemberAccessExpressionSyntax;
+                        var identifier = memberAccess.Expression as IdentifierNameSyntax;
+                        var identifierSymbol = model.GetSymbolInfo(identifier);
+                        if (identifierSymbol.Symbol.Kind == SymbolKind.Parameter)
+                        {
+                            var parameter = this.methodAnalyzed.Parameters.FirstOrDefault(p => p.Name == identifierSymbol.Symbol.Name);
+                            var parameterIndex = this.methodAnalyzed.Parameters.IndexOf(parameter);
+                            targetTypeInfo = this.argumentTypes.ElementAt(parameterIndex);
+                        }
+                    }
+
                     context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree, targetTypeInfo);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree, methodInvoked.Symbol as IMethodSymbol, targetTypeInfo, argumentTypes);
                     visitor.Visit(declaringSyntaxReference.GetSyntax());
                     context.Collector.StepOut();
                 }

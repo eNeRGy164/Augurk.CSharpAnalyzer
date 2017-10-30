@@ -14,6 +14,8 @@
  limitations under the License.
 */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.CodeAnalysis.CSharp.Syntax
 {
@@ -43,6 +45,37 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the names and types of the arguments passed in the invocation.
+        /// </summary>
+        /// <param name="expression">An <see cref="InvocationExpressionSyntax"/> representing the invocation.</param>
+        /// <param name="symbol">An <see cref="IMethodSymbol"/> representing the method being invoked.</param>
+        /// <param name="model">A <see cref="SemanticModel"/> for the project used to get type information.</param>
+        /// <returns>Returns a range of tuples containing the names and types of the arguments passed in the invocation.</returns>
+        public static IEnumerable<TypeInfo?> GetArgumentTypes(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+            if (expression.ArgumentList == null)
+            {
+                yield break;
+            }
+
+            for (int i = 0; i < expression.ArgumentList.Arguments.Count; i++)
+            {
+                TypeInfo? argumentType = null;
+                var argument = expression.ArgumentList.Arguments[i].ChildNodes().FirstOrDefault();
+                if (argument != null)
+                {
+                    argumentType = model.GetTypeInfo(argument);
+                }
+
+                yield return argumentType;
+            }
         }
     }
 }

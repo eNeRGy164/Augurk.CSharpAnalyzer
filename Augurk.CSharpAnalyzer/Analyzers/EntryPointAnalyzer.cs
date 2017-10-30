@@ -74,9 +74,17 @@ namespace Augurk.CSharpAnalyzer
             // Check for the presence of a WhenAttribute (we assume that SpecFlow is being used here)
             if (attributes.Any(attribute => attribute.AttributeClass.Name == "WhenAttribute" && attribute.AttributeClass.ContainingNamespace.Name == "SpecFlow"))
             {
+                // TODO Remove this if
+                if (!symbolInfo.Name.Contains("WhenBalanceIncreasesModuleIsBeingExecutedForTheWeek"))
+                {
+                    return node;
+                }
+                
                 // A method with a [WhenAttribute] is of interest, let's dig deeper
                 context.Collector.StepInto(symbolInfo);
-                return base.VisitMethodDeclaration(node);
+                var result = base.VisitMethodDeclaration(node);
+                context.Collector.StepOut();
+                return result;
             }
 
             // Do not analyze methods without a WhenAttribute any further
@@ -95,6 +103,7 @@ namespace Augurk.CSharpAnalyzer
                 // Find the method that is being invoked and the type on which it is invoked
                 var methodInvoked = model.GetSymbolInfo(node);
                 var targetTypeInfo = node.GetTargetType(model);
+                var argumentTypes = node.GetArgumentTypes(methodInvoked.Symbol as IMethodSymbol, model);
 
                 // Find the source location of the method being invoked
                 var declaringSyntaxNode = methodInvoked.Symbol?.DeclaringSyntaxReferences.FirstOrDefault();
@@ -102,7 +111,7 @@ namespace Augurk.CSharpAnalyzer
                 {
                     // Method being invoked is defined in source, so dig deeper
                     context.Collector.StepInto(methodInvoked.Symbol as IMethodSymbol);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, targetTypeInfo);
+                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, methodInvoked.Symbol as IMethodSymbol, targetTypeInfo, argumentTypes);
                     visitor.Visit(declaringSyntaxNode.GetSyntax());
                     context.Collector.StepOut();
                 }
