@@ -136,6 +136,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AnalyzeWithInheritance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\AnalyzingThroughDrivers.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AnalyzingThroughDrivers.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\AnalyzerSteps.cs" />
   </ItemGroup>
@@ -154,6 +159,10 @@
     <None Include="Features\AnalyzeWithInheritance.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>AnalyzeWithInheritance.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\AnalyzingThroughDrivers.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AnalyzingThroughDrivers.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
