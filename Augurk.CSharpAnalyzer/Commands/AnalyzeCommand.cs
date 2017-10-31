@@ -33,23 +33,6 @@ namespace Augurk.CSharpAnalyzer.Commands
     public class AnalyzeCommand : OaktonCommand<AnalyzeOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AnalyzeCommand"/>.
-        /// </summary>
-        public AnalyzeCommand()
-        {
-            Collector = new ConsoleInvocationTreeCollector();
-        }
-
-        /// <summary>
-        /// Gets or sets the <see cref="IInvocationTreeCollector"/> implementation to use during execution of this command.
-        /// </summary>
-        public IInvocationTreeCollector Collector
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Called when the command is being executed.
         /// </summary>
         /// <param name="input">An <see cref="AnalyzeOptions"/> containing the options passed to the command.</param>
@@ -74,7 +57,7 @@ namespace Augurk.CSharpAnalyzer.Commands
         /// Performs the actual analysis.
         /// </summary>
         /// <param name="options">Options passed to the analyze command.</param>
-        private async Task Analyze(AnalyzeOptions options)
+        public async Task<string> Analyze(AnalyzeOptions options)
         {
             // Load the solution
             var workspace = MSBuildWorkspace.Create();
@@ -92,13 +75,16 @@ namespace Augurk.CSharpAnalyzer.Commands
             var compilation = projects[specProject].Value;
 
             // Build the analysis context and go through each syntax tree
-            var context = new AnalyzeContext(projects, Collector, options);
+            var context = new AnalyzeContext(projects, options);
             foreach (var tree in compilation.SyntaxTrees)
             {
                 // Find entry-points 
                 var visitor = new EntryPointAnalyzer(context, compilation.GetSemanticModel(tree));
                 visitor.Visit(tree.GetRoot());
             }
+
+            // Return the result
+            return context.Collector.GetJsonOutput().ToString();
         }
     }
 }

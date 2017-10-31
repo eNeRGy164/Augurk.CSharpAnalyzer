@@ -23,7 +23,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
-    public class DefaultInvocationTreeCollector : IInvocationTreeCollector
+    public class DefaultInvocationTreeCollector
     {
         private readonly List<MethodWrapper> _invocations = new List<MethodWrapper>();
         private readonly Dictionary<IMethodSymbol, MethodWrapper> _wrappers = new Dictionary<IMethodSymbol, MethodWrapper>(); 

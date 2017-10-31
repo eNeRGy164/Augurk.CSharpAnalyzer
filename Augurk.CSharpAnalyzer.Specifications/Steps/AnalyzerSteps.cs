@@ -6,6 +6,7 @@ using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Converters;
 using TechTalk.SpecFlow;
+using System.Threading.Tasks;
 
 namespace Augurk.CSharpAnalyzer.Specifications.Steps
 {
@@ -29,7 +30,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         }
         
         [When(@"an analysis is run")]
-        public void WhenAnAnalysisIsRun()
+        public async Task WhenAnAnalysisIsRun()
         {
             var options = new AnalyzeOptions();
             options.Solution = _solution;
@@ -38,12 +39,8 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
 
             var command = new AnalyzeCommand();
             var collector = new DefaultInvocationTreeCollector();
-            command.Collector = collector;
 
-            bool result = command.Execute(options);
-            Assert.IsTrue(result, "An error occured during analysis.");
-
-            string resultingJson = collector.GetJsonOutput().ToString();
+            string resultingJson = await command.Analyze(options);
         }
 
         [When()]

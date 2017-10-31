@@ -30,12 +30,11 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// Initializes a new <see cref="AnalyzeContext"/> instance.
         /// </summary>
         /// <param name="projects">A dictionary of projects and their compilation for easy access.</param>
-        /// <param name="collector">An <see cref="IInvocationTreeCollector"/> implementation that collects the chain of calls.</param>
         /// <param name="options">The <see cref="AnalyzeOptions"/> that were passed to the command line.</param>
-        public AnalyzeContext(IDictionary<Project, Lazy<Compilation>> projects, IInvocationTreeCollector collector, AnalyzeOptions options)
+        public AnalyzeContext(IDictionary<Project, Lazy<Compilation>> projects, AnalyzeOptions options)
         {
             this.Projects = projects;
-            this.Collector = collector;
+            this.Collector = new DefaultInvocationTreeCollector();
             this.Options = options;
         }
 
@@ -46,7 +45,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// <summary>
         /// An <see cref="IInvocationTreeCollector"/> implementation that collects the chain of calls.
         /// </summary>
-        public IInvocationTreeCollector Collector { get; private set; }
+        public DefaultInvocationTreeCollector Collector { get; private set; }
         /// <summary>
         /// An <see cref="AnalyzeOptions"/> instance containing the options that were passed to the command line.
         /// </summary>
