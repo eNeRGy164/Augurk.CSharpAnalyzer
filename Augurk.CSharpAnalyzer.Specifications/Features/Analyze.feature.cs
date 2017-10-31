@@ -118,6 +118,133 @@ testRunner.Then("the first 3 lines of the resulting report are", ((string)(null)
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When calls directly into a single entrypoint")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze a C# project with a single test project")]
+        public virtual void WhenCallsDirectlyIntoASingleEntrypoint()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("When calls directly into a single entrypoint", ((string[])(null)));
+#line 12
+this.ScenarioSetup(scenarioInfo);
+#line 13
+testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 14
+testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Expression/Signature"});
+            table2.AddRow(new string[] {
+                        "When",
+                        "",
+                        "entrypoint is invoked directly"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.PlantGherkin(), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 15
+testRunner.Then("the resulting report contains \'When entrypoint is invoked directly\'", ((string)(null)), table2, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Entrypoint is surrounded by other invocations")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze a C# project with a single test project")]
+        public virtual void EntrypointIsSurroundedByOtherInvocations()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Entrypoint is surrounded by other invocations", ((string[])(null)));
+#line 21
+this.ScenarioSetup(scenarioInfo);
+#line 22
+testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 23
+testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Expression/Signature"});
+            table3.AddRow(new string[] {
+                        "When",
+                        "",
+                        "entrypoint is surrounded by other invocations"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.PlantGherkin(), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "Cucumis.Specifications.Support.ConsoleWriter.WriteDefaultMessage(), Cucumis.Speci" +
+                            "fications"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 24
+testRunner.Then("the resulting report contains \'When entrypoint is surrounded by other invocations" +
+                    "\'", ((string)(null)), table3, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When invokes two seperate entrypoints")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze a C# project with a single test project")]
+        public virtual void WhenInvokesTwoSeperateEntrypoints()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("When invokes two seperate entrypoints", ((string[])(null)));
+#line 33
+this.ScenarioSetup(scenarioInfo);
+#line 34
+testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 35
+testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Expression/Signature"});
+            table4.AddRow(new string[] {
+                        "When",
+                        "",
+                        "two separate entrypoints are invoked"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.PlantGherkin(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.WaterPlants(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 36
+testRunner.Then("the resulting report contains \'When two separate entrypoints are invoked\'", ((string)(null)), table4, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
