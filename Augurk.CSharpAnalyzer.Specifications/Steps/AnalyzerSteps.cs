@@ -63,7 +63,18 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             Assert.AreEqual(numberOfLinesToCheck, table.RowCount, "The provided number of rows does not match the mentioned number of rows.");
 
             List<dynamic> flatList = new List<dynamic>();
-            foreach (var invocation in _output)
+            Flatten(_output as JArray, flatList);
+
+            for (int counter = 0; counter < numberOfLinesToCheck; counter++)
+            {
+                Assert.AreEqual(table.Rows[0]["Kind"], flatList[0].Kind, $"The Kind does not match on row {counter}");
+                Assert.AreEqual(table.Rows[0]["Expression/Signature"], flatList[0].Signature, $"The Expression/Signature does not match on row {counter}");
+            }
+        }
+
+        private void Flatten(JArray invocations, List<dynamic> flatList)
+        {
+            foreach (var invocation in invocations)
             {
                 JToken regExpressions = invocation["RegularExpressions"];
 
@@ -72,12 +83,13 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                     Kind = invocation["Kind"].Value<String>(),
                     Signature = regExpressions == null ? invocation["Signature"].Value<String>() : String.Join(",", ((JArray)regExpressions).ToList())
                 });
-            }
 
-            for (int counter = 0; counter < numberOfLinesToCheck; counter++)
-            {
-                Assert.AreEqual(table.Rows[0]["Kind"], flatList[0].Kind, $"The Kind does not match on row {counter}");
-                Assert.AreEqual(table.Rows[0]["Expression/Signature"], flatList[0].Signature, $"The Expression/Signature does not match on row {counter}");
+                JArray deeperInvocations = invocation["Invocations"] as JArray;
+
+                if (deeperInvocations != null)
+                {
+                    Flatten(deeperInvocations, flatList);
+                }
             }
         }
     }

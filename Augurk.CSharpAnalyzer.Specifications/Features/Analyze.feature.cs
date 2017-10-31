@@ -103,8 +103,16 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
             table1.AddRow(new string[] {
                         "When",
                         "an analysis is run"});
+            table1.AddRow(new string[] {
+                        "Public",
+                        "Augurk.CSharpAnalyzer.Commands.AnalyzeCommand.Analyze(Augurk.CSharpAnalyzer.Optio" +
+                            "ns.AnalyzeOptions), Augurk.CSharpAnalyzer"});
+            table1.AddRow(new string[] {
+                        "Public",
+                        "Microsoft.CodeAnalysis.MSBuild.MSBuildWorkspace.Create(), Microsoft.CodeAnalysis." +
+                            "Workspace.Desktop"});
 #line 7
-testRunner.Then("the first 1 lines of the reported return for \'Augurk.CSharpAnalyzer\' are", ((string)(null)), table1, "Then ");
+testRunner.Then("the first 3 lines of the reported return for \'Augurk.CSharpAnalyzer\' are", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
