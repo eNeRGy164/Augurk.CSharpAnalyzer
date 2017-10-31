@@ -91,10 +91,10 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is an explicit interface implementation", ((string[])(null)));
 #line 5
 this.ScenarioSetup(scenarioInfo);
-#line 6
-testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 7
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 8
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -103,7 +103,7 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
             table1.AddRow(new string[] {
                         "When",
                         "",
-                        "entrypoint is invoked directly"});
+                        "entrypoint is an explicit interface implementation"});
             table1.AddRow(new string[] {
                         "Public",
                         "true",
@@ -112,8 +112,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 8
-testRunner.Then("the resulting report contains \'When entrypoint is an explicit interface implement" +
+#line 9
+ testRunner.Then("the resulting report contains \'When entrypoint is an explicit interface implement" +
                     "ation\'", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -125,12 +125,12 @@ testRunner.Then("the resulting report contains \'When entrypoint is an explicit 
         public virtual void EntrypointIsAnImplicitInterfaceImplementation()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is an implicit interface implementation", ((string[])(null)));
-#line 14
-this.ScenarioSetup(scenarioInfo);
 #line 15
-testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 16
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+this.ScenarioSetup(scenarioInfo);
+#line 17
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 18
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -139,7 +139,7 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
             table2.AddRow(new string[] {
                         "When",
                         "",
-                        "entrypoint is invoked directly"});
+                        "entrypoint is an implicit interface implementation"});
             table2.AddRow(new string[] {
                         "Public",
                         "true",
@@ -148,9 +148,49 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 17
-testRunner.Then("the resulting report contains \'When entrypoint is an implicit interface implement" +
+#line 19
+ testRunner.Then("the resulting report contains \'When entrypoint is an implicit interface implement" +
                     "ation\'", ((string)(null)), table2, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is invoked after invocation on interface")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Through Interfaces")]
+        public virtual void EntrypointIsInvokedAfterInvocationOnInterface()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is invoked after invocation on interface", ((string[])(null)));
+#line 25
+this.ScenarioSetup(scenarioInfo);
+#line 27
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 28
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Expression/Signature"});
+            table3.AddRow(new string[] {
+                        "When",
+                        "",
+                        "entrypoint is invoked after invocation on interface"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "Cucumis.Specifications.Support.MockedGardener.Plant(), Cucumis.Specifications"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.WaterPlants(), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 29
+ testRunner.Then("the resulting report contains \'When entrypoint is invoked after invocation on int" +
+                    "erface\'", ((string)(null)), table3, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

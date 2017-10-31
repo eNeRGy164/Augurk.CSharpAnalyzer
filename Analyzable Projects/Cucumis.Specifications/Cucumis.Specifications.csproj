@@ -70,6 +70,7 @@
     <Compile Include="Steps\BasicSteps.cs" />
     <Compile Include="Steps\InterfaceSteps.cs" />
     <Compile Include="Support\ConsoleWriter.cs" />
+    <Compile Include="Support\MockedGardener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
