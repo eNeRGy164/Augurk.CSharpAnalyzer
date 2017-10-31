@@ -92,7 +92,10 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         {
                             var identifierSymbol = model.GetSymbolInfo(identifier);
                             var syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
-                            targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
+                            if (syntax != null)
+                            {
+                                targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
+                            }
                         }
                     }
 
