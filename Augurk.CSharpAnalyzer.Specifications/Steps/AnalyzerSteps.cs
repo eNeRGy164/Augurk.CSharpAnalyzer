@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using TechTalk.SpecFlow;
 using System.Threading.Tasks;
@@ -87,10 +85,12 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             Assert.AreEqual(table.RowCount, flatList.Count, "The provided number of rows does not match the actual number of rows.");
             for (int counter = 0; counter < table.Rows.Count; counter++)
             {
-                Assert.AreEqual(table.Rows[counter]["Kind"], flatList[counter].Kind, $"The Kind does not match on row {counter}");
-                Assert.AreEqual(string.IsNullOrWhiteSpace(table.Rows[counter]["Local"]) ? false : Boolean.Parse(table.Rows[counter]["Local"]),
-                                flatList[counter].Local, $"Row {counter} locallity is incorrect");
-                Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature, $"The Expression/Signature does not match on row {counter}");
+                Assert.AreEqual(table.Rows[counter]["Kind"], flatList[counter].Kind, 
+                                $"The Kind does not match on row {counter}");
+                Assert.AreEqual(!String.IsNullOrWhiteSpace(table.Rows[counter]["Local"]) && Boolean.Parse(table.Rows[counter]["Local"]),
+                                flatList[counter].Local, $"Row {counter} locality is incorrect");
+                Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature, 
+                                $"The Expression/Signature does not match on row {counter}");
             }
         }
 

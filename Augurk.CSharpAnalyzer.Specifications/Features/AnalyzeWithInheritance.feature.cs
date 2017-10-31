@@ -18,14 +18,14 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.2.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute()]
-    public partial class AnalyzeThroughInterfacesFeature
+    public partial class AnalyzeWithInheritanceFeature
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private Microsoft.VisualStudio.TestTools.UnitTesting.TestContext _testContext;
         
-#line 1 "AnalyzeThroughInterfaces.feature"
+#line 1 "AnalyzeWithInheritance.feature"
 #line hidden
         
         public virtual Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
@@ -44,8 +44,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
         public static void FeatureSetup(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner(null, 0);
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Analyze Through Interfaces", "\tThe C# analyzer will attempt to resolve the concrete type with an interface\r\n\twh" +
-                    "en it is clearly declared in code.", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Analyze With Inheritance", null, ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -60,9 +59,9 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
         public virtual void TestInitialize()
         {
             if (((testRunner.FeatureContext != null) 
-                        && (testRunner.FeatureContext.FeatureInfo.Title != "Analyze Through Interfaces")))
+                        && (testRunner.FeatureContext.FeatureInfo.Title != "Analyze With Inheritance")))
             {
-                global::Augurk.CSharpAnalyzer.Specifications.Features.AnalyzeThroughInterfacesFeature.FeatureSetup(null);
+                global::Augurk.CSharpAnalyzer.Specifications.Features.AnalyzeWithInheritanceFeature.FeatureSetup(null);
             }
         }
         
@@ -84,16 +83,16 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is an explicit interface implementation")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Through Interfaces")]
-        public virtual void EntrypointIsAnExplicitInterfaceImplementation()
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is invoked on inherited automation class")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void EntrypointIsInvokedOnInheritedAutomationClass()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is an explicit interface implementation", ((string[])(null)));
-#line 5
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is invoked on inherited automation class", ((string[])(null)));
+#line 3
 this.ScenarioSetup(scenarioInfo);
-#line 7
+#line 6
  testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 8
+#line 7
  testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -103,33 +102,33 @@ this.ScenarioSetup(scenarioInfo);
             table1.AddRow(new string[] {
                         "When",
                         "",
-                        "entrypoint is an explicit interface implementation"});
+                        "entrypoint is invoked on inherited automation class"});
             table1.AddRow(new string[] {
                         "Public",
                         "true",
-                        "Cucumis.Gardener.Plant(), Cucumis"});
+                        "Cucumis.Gardener.PlantGherkin(), Cucumis"});
             table1.AddRow(new string[] {
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 9
- testRunner.Then("the resulting report contains \'When entrypoint is an explicit interface implement" +
-                    "ation\'", ((string)(null)), table1, "Then ");
+#line 8
+ testRunner.Then("the resulting report contains \'When entrypoint is invoked on inherited automation" +
+                    " class\'", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is an implicit interface implementation")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Through Interfaces")]
-        public virtual void EntrypointIsAnImplicitInterfaceImplementation()
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is invoked through an inherited automation class")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void EntrypointIsInvokedThroughAnInheritedAutomationClass()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is an implicit interface implementation", ((string[])(null)));
-#line 15
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is invoked through an inherited automation class", ((string[])(null)));
+#line 14
 this.ScenarioSetup(scenarioInfo);
-#line 17
+#line 16
  testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 18
+#line 17
  testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
@@ -139,7 +138,20 @@ this.ScenarioSetup(scenarioInfo);
             table2.AddRow(new string[] {
                         "When",
                         "",
-                        "entrypoint is an implicit interface implementation"});
+                        "entrypoint is invoked through an inherited automation class"});
+            table2.AddRow(new string[] {
+                        "Internal",
+                        "",
+                        "Cucumis.Specifications.Support.InheritedGardener.PlantGherkinAndWaterIt(), Cucumi" +
+                            "s.Specifications"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gardener.PlantGherkin(), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
             table2.AddRow(new string[] {
                         "Public",
                         "true",
@@ -148,49 +160,9 @@ this.ScenarioSetup(scenarioInfo);
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 19
- testRunner.Then("the resulting report contains \'When entrypoint is an implicit interface implement" +
-                    "ation\'", ((string)(null)), table2, "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is invoked after invocation on interface")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Through Interfaces")]
-        public virtual void EntrypointIsInvokedAfterInvocationOnInterface()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is invoked after invocation on interface", ((string[])(null)));
-#line 25
-this.ScenarioSetup(scenarioInfo);
-#line 27
- testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 28
- testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Kind",
-                        "Local",
-                        "Expression/Signature"});
-            table3.AddRow(new string[] {
-                        "When",
-                        "",
-                        "entrypoint is invoked after invocation on interface"});
-            table3.AddRow(new string[] {
-                        "Public",
-                        "",
-                        "Cucumis.Specifications.Support.MockedGardener.Plant(), Cucumis.Specifications"});
-            table3.AddRow(new string[] {
-                        "Public",
-                        "true",
-                        "Cucumis.Gardener.WaterPlants(), Cucumis"});
-            table3.AddRow(new string[] {
-                        "Public",
-                        "",
-                        "System.Console.WriteLine(string), mscorlib"});
-#line 29
- testRunner.Then("the resulting report contains \'When entrypoint is invoked after invocation on int" +
-                    "erface\'", ((string)(null)), table3, "Then ");
+#line 18
+ testRunner.Then("the resulting report contains \'When entrypoint is invoked through an inherited au" +
+                    "tomation class\'", ((string)(null)), table2, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

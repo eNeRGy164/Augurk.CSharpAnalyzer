@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cucumis.Specifications.Support;
 using TechTalk.SpecFlow;
 
 namespace Cucumis.Specifications.Steps
@@ -22,6 +18,18 @@ namespace Cucumis.Specifications.Steps
         {
             IGardener gardener = new Gardener();
             gardener.WaterPlants();
+        }
+
+        [When("entrypoint is invoked after invocation on interface")]
+        public void WhenEntrypointIsInvokedAfterInvocationOnInterface()
+        {
+            // First let the mocked gardener plant something
+            IGardener gardener = new MockedGardener();
+            gardener.Plant();
+
+            // Then let the real gardener water it
+            new Gardener().WaterPlants();
+
         }
     }
 }

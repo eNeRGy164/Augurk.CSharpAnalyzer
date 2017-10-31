@@ -90,10 +90,10 @@ namespace Augurk.CSharpAnalyzer.Specifications.Features
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Analyze", ((string[])(null)));
 #line 3
 this.ScenarioSetup(scenarioInfo);
-#line 4
-testRunner.Given("\'Augurk.CSharpAnalyzer.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 5
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("\'Augurk.CSharpAnalyzer.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 6
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -113,8 +113,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "",
                         "Microsoft.CodeAnalysis.MSBuild.MSBuildWorkspace.Create(), Microsoft.CodeAnalysis." +
                             "Workspaces.Desktop"});
-#line 6
-testRunner.Then("the first 3 lines of the resulting report are", ((string)(null)), table1, "Then ");
+#line 7
+ testRunner.Then("the first 3 lines of the resulting report are", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -125,12 +125,12 @@ testRunner.Then("the first 3 lines of the resulting report are", ((string)(null)
         public virtual void WhenCallsDirectlyIntoASingleEntrypoint()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("When calls directly into a single entrypoint", ((string[])(null)));
-#line 12
-this.ScenarioSetup(scenarioInfo);
 #line 13
-testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 14
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+this.ScenarioSetup(scenarioInfo);
+#line 15
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 16
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -148,8 +148,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 15
-testRunner.Then("the resulting report contains \'When entrypoint is invoked directly\'", ((string)(null)), table2, "Then ");
+#line 17
+ testRunner.Then("the resulting report contains \'When entrypoint is invoked directly\'", ((string)(null)), table2, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -160,12 +160,12 @@ testRunner.Then("the resulting report contains \'When entrypoint is invoked dire
         public virtual void EntrypointIsSurroundedByOtherInvocations()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Entrypoint is surrounded by other invocations", ((string[])(null)));
-#line 21
-this.ScenarioSetup(scenarioInfo);
-#line 22
-testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 23
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+this.ScenarioSetup(scenarioInfo);
+#line 25
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 26
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -196,8 +196,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 24
-testRunner.Then("the resulting report contains \'When entrypoint is surrounded by other invocations" +
+#line 27
+ testRunner.Then("the resulting report contains \'When entrypoint is surrounded by other invocations" +
                     "\'", ((string)(null)), table3, "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -209,12 +209,12 @@ testRunner.Then("the resulting report contains \'When entrypoint is surrounded b
         public virtual void WhenInvokesTwoSeperateEntrypoints()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("When invokes two seperate entrypoints", ((string[])(null)));
-#line 33
+#line 36
 this.ScenarioSetup(scenarioInfo);
-#line 34
-testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 35
-testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 38
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 39
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
@@ -240,8 +240,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 36
-testRunner.Then("the resulting report contains \'When two separate entrypoints are invoked\'", ((string)(null)), table4, "Then ");
+#line 40
+ testRunner.Then("the resulting report contains \'When two separate entrypoints are invoked\'", ((string)(null)), table4, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
