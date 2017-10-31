@@ -18,14 +18,13 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
 
 namespace Augurk.CSharpAnalyzer.Analyzers
 {
     /// <summary>
     /// Analyzes CSharp code of a specifications project in order to find entry points for a particular feature (ie. When steps).
     /// </summary>
-    public class EntryPointAnalyzer : CSharpSyntaxRewriter
+    public class EntryPointAnalyzer : InvocationTreeAnalyzer
     {
         private readonly AnalyzeContext context;
         private readonly SemanticModel model;
@@ -37,6 +36,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// <param name="context">The <see cref="AnalyzeContext"/> that tracks the analysis.</param>
         /// <param name="model">A <see cref="SemanticModel"/> of the specifications project.</param>
         public EntryPointAnalyzer(AnalyzeContext context, SemanticModel model)
+            : base(context, model)
         {
             this.context = context;
             this.model = model;
@@ -90,38 +90,19 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         }
 
         /// <summary>
-        /// Called when a method invocation is discovered in the source code.
+        /// Called when a method invocation is discovered in source code.
         /// </summary>
-        /// <param name="node">A <see cref="InvocationExpressionSyntax"/> describing the method being invoked.</param>
+        /// <param name="node">An <see cref="InvocationExpressionSyntax"/> describing the method being invoked.</param>
         public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            // Determine the kind of invocation
-            if (insideEntryPoint && node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
+            if (this.insideEntryPoint)
             {
-                // Find the method that is being invoked and the type on which it is invoked
-                IMethodSymbol methodInvoked = model.GetSymbolInfo(node).Symbol as IMethodSymbol;
-                TypeInfo? targetTypeInfo = node.GetTargetType(model);
-                IEnumerable<TypeInfo?> argumentTypes = node.GetArgumentTypes(methodInvoked, model);
-
-                // Find the source location of the method being invoked
-                SyntaxReference declaringSyntaxNode = methodInvoked.GetComparableSyntax();
-                if (declaringSyntaxNode != null && !context.Collector.IsAlreadyCollected(methodInvoked))
-                {
-                    // Method being invoked is defined in source, so dig deeper
-                    context.Collector.StepInto(methodInvoked);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxNode.SyntaxTree, methodInvoked, targetTypeInfo, argumentTypes);
-                    visitor.Visit(declaringSyntaxNode.GetSyntax());
-                    context.Collector.StepOut();
-                }
-                else
-                {
-                    // Method being invoked is not defined in source, or has already been collected, trace it but don't go deeper
-                    context.Collector.StepOver(methodInvoked);
-                }
+                return base.VisitInvocationExpression(node);
             }
-
-            // Dig deeper
-            return base.VisitInvocationExpression(node);
+            else
+            {
+                return node;
+            }
         }
     }
 }

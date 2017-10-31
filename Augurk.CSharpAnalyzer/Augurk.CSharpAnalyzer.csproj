@@ -105,11 +105,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzers\AnalyzeContext.cs" />
+    <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="Collectors\InvocationTreeCollector.cs" />
     <Compile Include="Commands\AnalyzeCommand.cs" />
-    <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="Extensions\InvocationExpressionSyntaxExtensions.cs" />
     <Compile Include="Extensions\SymbolExtensions.cs" />
+    <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Options\AnalyzeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
