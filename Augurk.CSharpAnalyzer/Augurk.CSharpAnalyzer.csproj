@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzers\AnalyzeContext.cs" />
-    <Compile Include="Collectors\DefaultInvocationTreeCollector.cs" />
+    <Compile Include="Collectors\InvocationTreeCollector.cs" />
     <Compile Include="Commands\AnalyzeCommand.cs" />
     <Compile Include="Analyzers\EntryPointAnalyzer.cs" />
     <Compile Include="Extensions\InvocationExpressionSyntaxExtensions.cs" />

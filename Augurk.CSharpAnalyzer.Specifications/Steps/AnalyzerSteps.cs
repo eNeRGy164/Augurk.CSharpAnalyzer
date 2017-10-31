@@ -42,7 +42,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             options.SystemUnderTest = _sutProject;
 
             var command = new AnalyzeCommand();
-            var collector = new DefaultInvocationTreeCollector();
+            var collector = new InvocationTreeCollector();
 
             _output = await command.Analyze(options);
         }

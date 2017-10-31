@@ -14,7 +14,6 @@
  limitations under the License.
 */
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -23,7 +22,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
-    public class DefaultInvocationTreeCollector
+    public class InvocationTreeCollector
     {
         private readonly List<MethodWrapper> _invocations = new List<MethodWrapper>();
         private readonly Dictionary<IMethodSymbol, MethodWrapper> _wrappers = new Dictionary<IMethodSymbol, MethodWrapper>(); 
