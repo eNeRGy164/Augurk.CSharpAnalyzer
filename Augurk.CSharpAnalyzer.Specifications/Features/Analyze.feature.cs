@@ -98,23 +98,13 @@ testRunner.And("those features describe \'Augurk.CSharpAnalyzer\'", ((string)(nu
 testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Type",
-                        "Signature"});
+                        "Kind",
+                        "Expression/Signature"});
             table1.AddRow(new string[] {
                         "When",
                         "an analysis is run"});
-            table1.AddRow(new string[] {
-                        "EntryPoint",
-                        "Augurk.CSharpAnalyzer.AnalyzeCommand.Execute(Augurk.CSharpAnalyzer.Options.Analyz" +
-                            "eOptions)"});
-            table1.AddRow(new string[] {
-                        "Public-Invoke",
-                        "Oakton.ConsoleWriter.Write(ConsoleColor, string)"});
-            table1.AddRow(new string[] {
-                        "Private-Invoke",
-                        "Augurk.CSharpAnalyzer.Analyze(Augurk.CSharpAnalyzer.Options.AnalyzeOptions)"});
 #line 7
-testRunner.Then("the following report is returned for \'Augurk.CSharpAnalyzer\'", ((string)(null)), table1, "Then ");
+testRunner.Then("the first 1 lines of the reported return for \'Augurk.CSharpAnalyzer\' are", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

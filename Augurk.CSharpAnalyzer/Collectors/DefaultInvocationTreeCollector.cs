@@ -77,34 +77,30 @@ namespace Augurk.CSharpAnalyzer.Collectors
             {
                 var jInvocation = new JObject();
 
+                var kind = invocation.RegularExpressions.Length > 0 ?
+                           "When" :
+                           invocation.Method.DeclaredAccessibility.ToString();
+
+                jInvocation.Add("Kind", kind);
+                jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
+
                 if (invocation.RegularExpressions.Length > 0)
                 {
-                    jInvocation.Add("Kind", "When");
-                    jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
                     jInvocation.Add("RegularExpressions", new JArray(invocation.RegularExpressions));
+                }
+
+                if (!invocationStack.Contains(invocation))
+                {
+                    invocationStack.Push(invocation);
                     jInvocation.Add("Invocations", GetJsonOutput(invocation.Invocations, invocationStack));
+                    invocationStack.Pop();
                 }
                 else
                 {
-                    
-                    jInvocation.Add("Kind", "Dunno");
-                    jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
-
-                    if (!invocationStack.Contains(invocation))
-                    {
-                        invocationStack.Push(invocation);
-                        jInvocation.Add("Invocations", GetJsonOutput(invocation.Invocations, invocationStack));
-                        invocationStack.Pop();
-                    }
-                    else
-                    {
-                        jInvocation.Add("Note", "Recursive");
-                    }
-
+                    jInvocation.Add("Note", "Recursive");
                 }
 
                 output.Add(jInvocation);
-                // Pop our own entry
             }
 
             return output;

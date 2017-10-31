@@ -18,6 +18,7 @@ using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using Newtonsoft.Json.Linq;
 using Oakton;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace Augurk.CSharpAnalyzer.Commands
         /// Performs the actual analysis.
         /// </summary>
         /// <param name="options">Options passed to the analyze command.</param>
-        public async Task<string> Analyze(AnalyzeOptions options)
+        public async Task<JToken> Analyze(AnalyzeOptions options)
         {
             // Load the solution
             var workspace = MSBuildWorkspace.Create();
@@ -84,7 +85,7 @@ namespace Augurk.CSharpAnalyzer.Commands
             }
 
             // Return the result
-            return context.Collector.GetJsonOutput().ToString();
+            return context.Collector.GetJsonOutput();
         }
     }
 }
