@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cucumis.Specifications.Support;
+﻿using Cucumis.Specifications.Support;
 using TechTalk.SpecFlow;
 
 namespace Cucumis.Specifications.Steps

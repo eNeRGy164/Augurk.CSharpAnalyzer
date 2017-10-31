@@ -68,8 +68,10 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\BasicSteps.cs" />
+    <Compile Include="Steps\InheritanceSteps.cs" />
     <Compile Include="Steps\InterfaceSteps.cs" />
     <Compile Include="Support\ConsoleWriter.cs" />
+    <Compile Include="Support\InheritedGardener.cs" />
     <Compile Include="Support\MockedGardener.cs" />
   </ItemGroup>
   <ItemGroup>
