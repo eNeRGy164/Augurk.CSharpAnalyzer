@@ -19,6 +19,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
+using Augurk.CSharpAnalyzer.Analyzers;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
@@ -27,7 +28,22 @@ namespace Augurk.CSharpAnalyzer.Collectors
         private readonly List<MethodWrapper> _invocations = new List<MethodWrapper>();
         private readonly Dictionary<IMethodSymbol, MethodWrapper> _wrappers = new Dictionary<IMethodSymbol, MethodWrapper>(); 
         private readonly Stack<MethodWrapper> _currentStack = new Stack<MethodWrapper>();
+        private readonly AnalyzeContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvocationTreeCollector"/> class.
+        /// </summary>
+        /// <param name="context">The <see cref="AnalyzeContext"/> in which the analysis is being run.</param>
+        public InvocationTreeCollector(AnalyzeContext context)
+        {
+            this._context = context;
+        }
+
+        /// <summary>
+        /// Determines if the provided <paramref name="method"/> has previously been collected, and thus can be stepped over.
+        /// </summary>
+        /// <param name="method">An <see cref="IMethodSymbol"/> instance that describes the method to check for.</param>
+        /// <returns>Returns <c>true</c> if the method has previously been collected, otherwise <c>false</c>.</returns>
         public bool IsAlreadyCollected(IMethodSymbol method)
         {
             return _wrappers.ContainsKey(method);
@@ -79,6 +95,12 @@ namespace Augurk.CSharpAnalyzer.Collectors
                 var kind = invocation.RegularExpressions.Length > 0 ?
                            "When" :
                            invocation.Method.DeclaredAccessibility.ToString();
+
+                var methodDeclaration = invocation.Method.GetComparableSyntax();
+                if (methodDeclaration != null && _context.SystemUnderTest.GetDocument(methodDeclaration.SyntaxTree) != null)
+                {
+                    kind = "Entrypoint";
+                }
 
                 jInvocation.Add("Kind", kind);
                 jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");

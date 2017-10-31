@@ -18,6 +18,7 @@ using Augurk.CSharpAnalyzer.Options;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Augurk.CSharpAnalyzer.Analyzers
 {
@@ -34,8 +35,14 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         public AnalyzeContext(IDictionary<Project, Lazy<Compilation>> projects, AnalyzeOptions options)
         {
             this.Projects = projects;
-            this.Collector = new InvocationTreeCollector();
+            this.Collector = new InvocationTreeCollector(this);
             this.Options = options;
+
+            this.SystemUnderTest = projects.FirstOrDefault(p => p.Key.Name == options.SystemUnderTest).Key;
+            if (this.SystemUnderTest == null)
+            {
+                throw new ArgumentException($"Project {options.SystemUnderTest} not found in solution.");
+            }
         }
 
         /// <summary>
@@ -50,5 +57,10 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// An <see cref="AnalyzeOptions"/> instance containing the options that were passed to the command line.
         /// </summary>
         public AnalyzeOptions Options { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="Project"/> representing the system under test.
+        /// </summary>
+        public Project SystemUnderTest { get; private set; }
     }
 }

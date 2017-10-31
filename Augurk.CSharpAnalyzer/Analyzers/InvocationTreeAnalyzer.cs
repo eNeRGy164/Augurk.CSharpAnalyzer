@@ -106,12 +106,15 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     {
                         var memberAccess = node.Expression as MemberAccessExpressionSyntax;
                         var identifier = memberAccess.Expression as IdentifierNameSyntax;
-                        var identifierSymbol = model.GetSymbolInfo(identifier);
-                        if (identifierSymbol.Symbol.Kind == SymbolKind.Parameter)
+                        if (identifier != null)
                         {
-                            var parameter = this.methodAnalyzed.Parameters.FirstOrDefault(p => p.Name == identifierSymbol.Symbol.Name);
-                            var parameterIndex = this.methodAnalyzed.Parameters.IndexOf(parameter);
-                            targetTypeInfo = this.argumentTypes.ElementAt(parameterIndex);
+                            var identifierSymbol = model.GetSymbolInfo(identifier);
+                            if (identifierSymbol.Symbol.Kind == SymbolKind.Parameter)
+                            {
+                                var parameter = this.methodAnalyzed.Parameters.FirstOrDefault(p => p.Name == identifierSymbol.Symbol.Name);
+                                var parameterIndex = this.methodAnalyzed.Parameters.IndexOf(parameter);
+                                targetTypeInfo = this.argumentTypes.ElementAt(parameterIndex);
+                            }
                         }
                     }
 
