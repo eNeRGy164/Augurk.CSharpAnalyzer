@@ -67,8 +67,10 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
 
             for (int counter = 0; counter < numberOfLinesToCheck; counter++)
             {
-                Assert.AreEqual(table.Rows[0]["Kind"], flatList[0].Kind, $"The Kind does not match on row {counter}");
-                Assert.AreEqual(table.Rows[0]["Expression/Signature"], flatList[0].Signature, $"The Expression/Signature does not match on row {counter}");
+                Assert.AreEqual(table.Rows[counter]["Kind"], flatList[counter].Kind, $"The Kind does not match on row {counter}");
+                Assert.AreEqual(string.IsNullOrWhiteSpace(table.Rows[counter]["Local"]) ? false : Boolean.Parse(table.Rows[counter]["Local"]),
+                                flatList[counter].Local, $"Row {counter} locallity is incorrect");
+                Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature, $"The Expression/Signature does not match on row {counter}");
             }
         }
 
@@ -81,6 +83,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                 flatList.Add(new
                 {
                     Kind = invocation["Kind"].Value<String>(),
+                    Local = invocation["Local"]?.Value<bool>() ?? false,
                     Signature = regExpressions == null ? invocation["Signature"].Value<String>() : String.Join(",", ((JArray)regExpressions).ToList())
                 });
 

@@ -96,11 +96,6 @@ namespace Augurk.CSharpAnalyzer.Collectors
                            "When" :
                            invocation.Method.DeclaredAccessibility.ToString();
 
-                var methodDeclaration = invocation.Method.GetComparableSyntax();
-                if (methodDeclaration != null && _context.SystemUnderTest.GetDocument(methodDeclaration.SyntaxTree) != null)
-                {
-                    kind = "Entrypoint";
-                }
 
                 jInvocation.Add("Kind", kind);
                 jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
@@ -108,6 +103,12 @@ namespace Augurk.CSharpAnalyzer.Collectors
                 if (invocation.RegularExpressions.Length > 0)
                 {
                     jInvocation.Add("RegularExpressions", new JArray(invocation.RegularExpressions));
+                }
+
+                SyntaxReference methodDeclaration = invocation.Method.GetComparableSyntax();
+                if (methodDeclaration != null && _context.SystemUnderTest.GetDocument(methodDeclaration.SyntaxTree) != null)
+                {
+                    jInvocation.Add("Local", true);
                 }
 
                 if (!invocationStack.Contains(invocation))
