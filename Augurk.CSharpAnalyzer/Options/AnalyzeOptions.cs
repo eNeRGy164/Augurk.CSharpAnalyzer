@@ -27,8 +27,5 @@ namespace Augurk.CSharpAnalyzer.Options
 
         [Description("Name of the project that contains the feature files")]
         public string SpecificationsProject { get; set; }
-
-        [Description("Name of the project that contains the actual implementation")]
-        public string SystemUnderTest { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
     {
         private string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Augurk.CSharpAnalyzer.sln");
         private string _targetProject;
-        private string _sutProject;
         private JToken _output;
 
         [Given(@"'(.*)' contains feature files")]
@@ -27,19 +26,12 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             _targetProject = projectName;
         }
         
-        [Given(@"those features describe '(.*)'")]
-        public void GivenThoseFeaturesDescribe(string projectName)
-        {
-            _sutProject = projectName;
-        }
-        
         [When(@"an analysis is run")]
         public async Task WhenAnAnalysisIsRun()
         {
             var options = new AnalyzeOptions();
             options.Solution = _solution;
             options.SpecificationsProject = _targetProject;
-            options.SystemUnderTest = _sutProject;
 
             var command = new AnalyzeCommand();
 
@@ -52,8 +44,8 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             ScenarioContext.Current.Pending();
         }
         
-        [Then(@"the first (.*) lines of the reported return for '(.*)' are")]
-        public void ThenTheFirstLinesOfTheReportedReturnForAre(int numberOfLinesToCheck, string projectName, Table table)
+        [Then(@"the first (.*) lines of the resulting report are")]
+        public void ThenTheFirstLinesOfTheResultingReportAre(int numberOfLinesToCheck, Table table)
         {
             if (_output == null)
             {

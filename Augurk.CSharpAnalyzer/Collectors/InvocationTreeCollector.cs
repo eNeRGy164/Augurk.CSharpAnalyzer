@@ -106,7 +106,7 @@ namespace Augurk.CSharpAnalyzer.Collectors
                 }
 
                 SyntaxReference methodDeclaration = invocation.Method.GetComparableSyntax();
-                if (methodDeclaration != null && _context.SystemUnderTest.GetDocument(methodDeclaration.SyntaxTree) != null)
+                if (methodDeclaration != null && _context.SpecifcationsProject.GetDocument(methodDeclaration.SyntaxTree) == null)
                 {
                     jInvocation.Add("Local", true);
                 }

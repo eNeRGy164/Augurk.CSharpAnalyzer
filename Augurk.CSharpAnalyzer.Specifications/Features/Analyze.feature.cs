@@ -93,8 +93,6 @@ this.ScenarioSetup(scenarioInfo);
 #line 4
 testRunner.Given("\'Augurk.CSharpAnalyzer.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 5
-testRunner.And("those features describe \'Augurk.CSharpAnalyzer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 6
 testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -115,8 +113,8 @@ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Tabl
                         "",
                         "Microsoft.CodeAnalysis.MSBuild.MSBuildWorkspace.Create(), Microsoft.CodeAnalysis." +
                             "Workspaces.Desktop"});
-#line 7
-testRunner.Then("the first 3 lines of the reported return for \'Augurk.CSharpAnalyzer\' are", ((string)(null)), table1, "Then ");
+#line 6
+testRunner.Then("the first 3 lines of the resulting report are", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

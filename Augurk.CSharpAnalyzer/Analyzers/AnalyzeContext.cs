@@ -38,10 +38,10 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             this.Collector = new InvocationTreeCollector(this);
             this.Options = options;
 
-            this.SystemUnderTest = projects.FirstOrDefault(p => p.Key.Name == options.SystemUnderTest).Key;
-            if (this.SystemUnderTest == null)
+            this.SpecifcationsProject = projects.FirstOrDefault(p => p.Key.Name == options.SpecificationsProject).Key;
+            if (this.SpecifcationsProject == null)
             {
-                throw new ArgumentException($"Project {options.SystemUnderTest} not found in solution.");
+                throw new ArgumentException($"Project {options.SpecificationsProject} not found in solution.");
             }
         }
 
@@ -61,6 +61,6 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// <summary>
         /// Gets the <see cref="Project"/> representing the system under test.
         /// </summary>
-        public Project SystemUnderTest { get; private set; }
+        public Project SpecifcationsProject { get; private set; }
     }
 }
