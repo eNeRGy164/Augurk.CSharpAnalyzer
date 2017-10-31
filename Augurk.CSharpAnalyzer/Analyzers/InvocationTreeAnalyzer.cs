@@ -92,7 +92,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                         {
                             var identifierSymbol = model.GetSymbolInfo(identifier);
                             var syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
-                            if (syntax != null)
+                            if (syntax != null && syntax.ChildNodes().Any())
                             {
                                 targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
                             }
@@ -101,6 +101,13 @@ namespace Augurk.CSharpAnalyzer.Analyzers
 
                     if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
                     {
+                        if (targetTypeInfo?.Type == methodInvoked.ContainingType)
+                        {
+                            // No concrete type was found, no use trying to find an implementation
+                            context.Collector.StepOver(methodInvoked);
+                            return node;
+                        }
+
                         methodInvoked = targetTypeInfo?.Type.FindImplementationForInterfaceMember(methodInvoked) as IMethodSymbol;
                         if (context.Collector.IsAlreadyCollected(methodInvoked))
                         {
