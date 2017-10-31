@@ -126,6 +126,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Analyze.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\AnalyzeThroughInterfaces.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AnalyzeThroughInterfaces.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\AnalyzerSteps.cs" />
   </ItemGroup>
@@ -136,6 +141,10 @@
     <None Include="Features\Analyze.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Analyze.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\AnalyzeThroughInterfaces.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AnalyzeThroughInterfaces.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
