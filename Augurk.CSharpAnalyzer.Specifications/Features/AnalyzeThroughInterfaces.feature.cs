@@ -105,9 +105,9 @@ this.ScenarioSetup(scenarioInfo);
                         "",
                         "entrypoint is an explicit interface implementation"});
             table1.AddRow(new string[] {
-                        "Public",
+                        "Private",
                         "true",
-                        "Cucumis.Gardener.Plant(), Cucumis"});
+                        "Cucumis.Gardener.Cucumis.IGardener.Plant(), Cucumis"});
             table1.AddRow(new string[] {
                         "Public",
                         "",
