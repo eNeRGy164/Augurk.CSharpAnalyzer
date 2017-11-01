@@ -194,6 +194,51 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("entrypoint is invoked through an interface implementation")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Through Interfaces")]
+        public virtual void EntrypointIsInvokedThroughAnInterfaceImplementation()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("entrypoint is invoked through an interface implementation", ((string[])(null)));
+#line 36
+this.ScenarioSetup(scenarioInfo);
+#line 38
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 39
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Expression/Signature"});
+            table4.AddRow(new string[] {
+                        "When",
+                        "",
+                        "entrypoint is invoked through an interface implementation"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "Cucumis.Specifications.Support.MockedGardener.WaterPlants(), Cucumis.Specificatio" +
+                            "ns"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "Cucumis.Gherkin.OnWater(Cucumis.WaterEventArgs), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Protected",
+                        "true",
+                        "Cucumis.Gherkin.Grow(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 40
+ testRunner.Then("the resulting report contains \'When entrypoint is invoked through an interface im" +
+                    "plementation\'", ((string)(null)), table4, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

@@ -9,7 +9,7 @@
 
         public void WaterPlants()
         {
-            // Do nothing to limit test output length
+            new Gherkin().OnWater(new WaterEventArgs());
         }
     }
 }

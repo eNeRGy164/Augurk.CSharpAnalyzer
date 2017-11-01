@@ -29,7 +29,16 @@ namespace Cucumis.Specifications.Steps
 
             // Then let the real gardener water it
             new Gardener().WaterPlants();
+        }
 
+        [When("entrypoint is invoked through an interface implementation")]
+        public void WhenEntrypointIsInvokedThroughAnInterfaceImplementation()
+        {
+            // The mocked gardener implements an interface from the system
+            // under test but the real entrypoint is the call it does on the
+            // provided Gherkin.
+            IGardener gardener = new MockedGardener();
+            gardener.WaterPlants();
         }
     }
 }
