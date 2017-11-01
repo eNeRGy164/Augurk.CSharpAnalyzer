@@ -1,4 +1,6 @@
-﻿namespace Cucumis
+﻿using System;
+
+namespace Cucumis
 {
     /// <summary>
     /// This class represents a Gherkin; the edible variety, not the written one.
@@ -14,6 +16,10 @@
             {
                 // The explicit mention of base is relevant for the test!
                 base.Grow();
+            }
+            else
+            {
+                Console.WriteLine("Gerkin: I cannot grow on this water.");
             }
         }
     }

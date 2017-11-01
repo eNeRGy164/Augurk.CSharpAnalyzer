@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Activation;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -89,12 +90,16 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                                 $"The Kind does not match on row {counter}");
                 Assert.AreEqual(!String.IsNullOrWhiteSpace(table.Rows[counter]["Local"]) && Boolean.Parse(table.Rows[counter]["Local"]),
                                 flatList[counter].Local, $"Row {counter} locality is incorrect");
+                if (table.ContainsColumn("Level"))
+                {
+                    Assert.AreEqual(Int32.Parse(table.Rows[counter]["Level"]), flatList[counter].Level, $"The level on row {counter} is incorrect");
+                }
                 Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature, 
                                 $"The Expression/Signature does not match on row {counter}");
             }
         }
 
-        private void Flatten(JArray invocations, List<dynamic> flatList)
+        private void Flatten(JArray invocations, List<dynamic> flatList, int level = 0)
         {
             foreach (var invocation in invocations)
             {
@@ -104,6 +109,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                 {
                     Kind = invocation["Kind"].Value<String>(),
                     Local = invocation["Local"]?.Value<bool>() ?? false,
+                    Level = level,
                     Signature = regExpressions == null ? invocation["Signature"].Value<String>() : String.Join(",", ((JArray)regExpressions).ToList())
                 });
 
@@ -111,7 +117,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
 
                 if (deeperInvocations != null)
                 {
-                    Flatten(deeperInvocations, flatList);
+                    Flatten(deeperInvocations, flatList, level + 1);
                 }
             }
         }
