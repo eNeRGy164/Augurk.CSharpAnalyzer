@@ -87,7 +87,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
                     {
                         var memberAccess = node.Expression as MemberAccessExpressionSyntax;
-                        var identifier = memberAccess.Expression as IdentifierNameSyntax;
+                        var identifier = memberAccess?.Expression as IdentifierNameSyntax ?? node.Expression as IdentifierNameSyntax;
                         if (identifier != null)
                         {
                             var identifierSymbol = model.GetSymbolInfo(identifier);
@@ -101,7 +101,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
 
                     if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
                     {
-                        if (targetTypeInfo?.Type == methodInvoked.ContainingType)
+                        if ((targetTypeInfo?.Type.IsAbstract).GetValueOrDefault())
                         {
                             // No concrete type was found, no use trying to find an implementation
                             context.Collector.StepOver(methodInvoked);
@@ -154,7 +154,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     // Step into the method being invoked
                     var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
                     var argumentTypes = node.GetArgumentTypes(methodInvoked, model).ToList();
-                    if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
+                    if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract && !methodInvoked.IsExtensionMethod)
                     {
                         var memberAccess = node.Expression as MemberAccessExpressionSyntax;
                         var identifier = memberAccess.Expression as IdentifierNameSyntax;

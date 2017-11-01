@@ -18,10 +18,12 @@ using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oakton;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,13 +45,15 @@ namespace Augurk.CSharpAnalyzer.Commands
             try
             {
                 ConsoleWriter.Write(ConsoleColor.White, $"Starting analysis for solution {input.Solution}");
-                Analyze(input).Wait();
+                JToken result = Analyze(input).Result;
+                result.WriteTo(new JsonTextWriter(File.CreateText(Path.Combine(Environment.CurrentDirectory, "output.json"))));
                 ConsoleWriter.Write(ConsoleColor.White, $"Analysis succesful for solution {input.Solution}");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ConsoleWriter.Write(ConsoleColor.Red, $"Analysis failed for solution {input.Solution}");
+                ConsoleWriter.Write(ConsoleColor.White, ex.ToString());
                 return false;
             }
         }

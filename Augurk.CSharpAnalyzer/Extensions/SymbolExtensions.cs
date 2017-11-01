@@ -33,15 +33,15 @@ namespace Microsoft.CodeAnalysis
         /// </returns>
         public static SyntaxReference GetComparableSyntax(this ISymbol symbol)
         {
+            if (symbol == null || symbol.DeclaringSyntaxReferences.Length == 0)
+            {
+                return null;
+            }
+
             if (symbol.DeclaringSyntaxReferences.Length > 1)
             {
                 throw new NotSupportedException($"Symbol \"{symbol}\" has more than one (1) declaration. " +
                                                 $"The Augurk CSharpAnalyzer was not designed to handle this scenario.");
-            }
-
-            if (symbol.DeclaringSyntaxReferences.Length == 0)
-            {
-                return null;
             }
 
             return symbol.DeclaringSyntaxReferences[0];
