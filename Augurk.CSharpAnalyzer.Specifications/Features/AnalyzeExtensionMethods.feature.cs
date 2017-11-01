@@ -124,17 +124,7 @@ this.ScenarioSetup(scenarioInfo);
                         "Internal",
                         "true",
                         "3",
-                        "Cucumis.PickyGherkin.CutVine(), Cucumis"});
-            table1.AddRow(new string[] {
-                        "Internal",
-                        "true",
-                        "4",
                         "Cucumis.Gherkin.CutVine(), Cucumis"});
-            table1.AddRow(new string[] {
-                        "Public",
-                        "",
-                        "5",
-                        "System.Console.WriteLine(string), mscorlib"});
             table1.AddRow(new string[] {
                         "Public",
                         "",
@@ -142,6 +132,71 @@ this.ScenarioSetup(scenarioInfo);
                         "System.Console.WriteLine(string), mscorlib"});
 #line 7
  testRunner.Then("the resulting report contains \'When an extension method is invoked\'", ((string)(null)), table1, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("an extension method is invoked on a derived type")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze Extension Methods")]
+        public virtual void AnExtensionMethodIsInvokedOnADerivedType()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("an extension method is invoked on a derived type", ((string[])(null)));
+#line 16
+this.ScenarioSetup(scenarioInfo);
+#line 18
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 19
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Level",
+                        "Expression/Signature"});
+            table2.AddRow(new string[] {
+                        "When",
+                        "",
+                        "0",
+                        "an extension method is invoked on a derived type"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "1",
+                        "Cucumis.GherkinExtensions.Harvest(Cucumis.Gherkin), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "2",
+                        "Cucumis.Gardener.HarvestGherkin(Cucumis.Gherkin), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "3",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table2.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "3",
+                        "Cucumis.PickyGherkin.CutVine(), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "4",
+                        "Cucumis.Gherkin.CutVine(), Cucumis"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "5",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "4",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 20
+ testRunner.Then("the resulting report contains \'When an extension method is invoked on a derived t" +
+                    "ype\'", ((string)(null)), table2, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

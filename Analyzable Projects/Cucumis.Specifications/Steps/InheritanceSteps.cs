@@ -19,5 +19,13 @@ namespace Cucumis.Specifications.Steps
             // The InheritedGardener is so much more efficient
             new InheritedGardener().PlantGherkinAndWaterIt();
         }
+
+        [When("same method is invoked with different concrete types")]
+        public void WhenSameMethodIsInvokedWithDifferentConcreteTypes()
+        {
+            var gardener = new Gardener();
+            gardener.HarvestGherkin(new Gherkin());
+            gardener.HarvestGherkin(new PickyGherkin());
+        }
     }
 }

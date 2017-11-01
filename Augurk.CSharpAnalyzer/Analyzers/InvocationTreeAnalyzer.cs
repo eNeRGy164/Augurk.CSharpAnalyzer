@@ -30,9 +30,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         private readonly AnalyzeContext context;
         private readonly SemanticModel model;
 
-        private readonly IMethodSymbol methodAnalyzed;
-        private readonly TypeInfo? targetType;
-        private readonly IEnumerable<TypeInfo?> argumentTypes;
+        private readonly InvokedMethod invokedMethod;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvocationTreeAnalyzer"/> class.
@@ -40,7 +38,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// <param name="context">The <see cref="AnalyzeContext"/> tracking information regarding the analysis.</param>
         /// <param name="model">A <see cref="SemanticModel"/> for the code being analyzed.</param>
         public InvocationTreeAnalyzer(AnalyzeContext context, SemanticModel model)
-            : this(context, model, null, null, null)
+            : this(context, model, null)
         {
         }
 
@@ -49,16 +47,12 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// </summary>
         /// <param name="context">The <see cref="AnalyzeContext"/> tracking information regarding the analysis.</param>
         /// <param name="model">A <see cref="SemanticModel"/> for the code being analyzed.</param>
-        /// <param name="targetType">Type on which the method being analyzed here is invoked.</param>
-        /// <param name="methodAnalyzed">The <see cref="IMethodSymbol"/> representing the method being invoked.</param>
-        /// <param name="argumentTypes">Types of the argument passed to the method being analyzed here.</param>
-        public InvocationTreeAnalyzer(AnalyzeContext context, SemanticModel model, IMethodSymbol methodAnalyzed, TypeInfo? targetType, IEnumerable<TypeInfo?> argumentTypes)
+        /// <param name="invokedMethod">An <see cref="InvokedMethod"/> instance that represents the method currently being analyzed.</param>
+        public InvocationTreeAnalyzer(AnalyzeContext context, SemanticModel model, InvokedMethod? invokedMethod)
         {
             this.context = context;
             this.model = model;
-            this.methodAnalyzed = methodAnalyzed;
-            this.targetType = targetType;
-            this.argumentTypes = argumentTypes;
+            this.invokedMethod = invokedMethod.GetValueOrDefault();
         }
 
         /// <summary>
@@ -86,7 +80,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     return StepOver(node, methodInvoked);
                 }
 
-                return HandleInvocation(node, methodInvoked, declaringSyntaxReference, this.targetType);
+                return HandleInvocation(node, methodInvoked, declaringSyntaxReference, this.invokedMethod.TargetType);
             }
 
             return base.VisitInvocationExpression(node);
@@ -95,7 +89,12 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         private SyntaxNode HandleInvocation(InvocationExpressionSyntax node, IMethodSymbol methodInvoked, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
         {
             // Determine how the method is being invoked
-            if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
+            if (methodInvoked.IsExtensionMethod)
+            {
+                // Find target type and step in
+                return HandleExtensionMethod(node, methodInvoked, declaringSyntaxReference, targetType);
+            }
+            else if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
             {
                 // Find implementation, or step over
                 return HandleInterfaceMethod(node, methodInvoked, declaringSyntaxReference, targetType);
@@ -117,7 +116,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     else
                     {
                         // Step in
-                        return StepIn(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                        return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
                     }
                 }
             }
@@ -131,14 +130,22 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 else
                 {
                     // Step in
-                    return StepIn(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                    return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
                 }
             }
         }
 
+        private SyntaxNode HandleExtensionMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
+        {
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, this.invokedMethod);
+            // Finish by locking in these types through a ToList
+            IEnumerable<TypeInfo?> argumentTypes = Enumerable.Repeat(target, 1).Concat(node.GetArgumentTypes(method.ReducedFrom, model)).ToList();
+            return StepIntoExtensionMethod(node, new InvokedMethod(method.ReducedFrom, null, argumentTypes, method.ReducedFrom.GetComparableSyntax()));
+        }
+
         private SyntaxNode HandleInterfaceMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
         {
-            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, this.invokedMethod);
             if (!target.HasValue)
             {
                 return StepOver(node, method);
@@ -157,7 +164,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
 
         private SyntaxNode HandleAbstractMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
         {
-            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, this.invokedMethod);
             if (target.HasValue)
             {
                 // Find the members of the type on which the current method is being invoked that are defined as an override
@@ -176,7 +183,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
 
         private SyntaxNode HandleVirtualMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
         {
-            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, this.invokedMethod);
             if (target.HasValue)
             {
                 // Find the members of the type on which the current method is being invoked that are defined as an override
@@ -190,7 +197,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 }
             }
 
-            return StepIn(node, new InvokedMethod(method, this.targetType, node.GetArgumentTypes(method, model), declaringSyntaxReference));
+            return StepInto(node, new InvokedMethod(method, this.invokedMethod.TargetType, node.GetArgumentTypes(method, model), declaringSyntaxReference));
         }
 
         private SyntaxNode StepOver(InvocationExpressionSyntax node, IMethodSymbol method)
@@ -199,7 +206,13 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             return node;
         }
 
-        private SyntaxNode StepIn(InvocationExpressionSyntax node, InvokedMethod method)
+        private SyntaxNode StepOverExtensionMethod(InvocationExpressionSyntax node, IMethodSymbol method, ITypeSymbol targetType)
+        {
+            context.Collector.StepOverExtensionMethod(method, targetType);
+            return node;
+        }
+
+        private SyntaxNode StepInto(InvocationExpressionSyntax node, InvokedMethod method)
         {
             if (context.Collector.IsAlreadyCollected(method.Method))
             {
@@ -209,27 +222,28 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             {
                 context.Collector.StepInto(method.Method);
                 var visitor = new InvocationTreeAnalyzer(context, method.DeclaringSyntaxReference.SyntaxTree.GetSemanticModel(context),
-                    method.Method, method.TargetType, method.ArgumentTypes);
+                    new InvokedMethod(method.Method, method.TargetType, method.ArgumentTypes, method.DeclaringSyntaxReference));
                 visitor.Visit(method.DeclaringSyntaxReference.GetSyntax());
                 context.Collector.StepOut();
                 return node;
             }
         }
 
-        private struct InvokedMethod
+        private SyntaxNode StepIntoExtensionMethod(InvocationExpressionSyntax node, InvokedMethod method)
         {
-            public InvokedMethod(IMethodSymbol method, TypeInfo? targetType, IEnumerable<TypeInfo?> argumentTypes, SyntaxReference declaringSyntaxReference)
+            if (context.Collector.IsExtensionMethodAlreadyCollected(method.Method, method.ArgumentTypes.First()?.Type))
             {
-                this.Method = method;
-                this.TargetType = targetType;
-                this.ArgumentTypes = argumentTypes;
-                this.DeclaringSyntaxReference = declaringSyntaxReference;
+                return StepOverExtensionMethod(node, method.Method, method.ArgumentTypes.First()?.Type);
             }
-
-            public IMethodSymbol Method { get; private set; }
-            public TypeInfo? TargetType { get; private set; }
-            public IEnumerable<TypeInfo?> ArgumentTypes { get; private set; }
-            public SyntaxReference DeclaringSyntaxReference { get; private set; }
+            else
+            {
+                context.Collector.StepIntoExtensionMethod(method.Method, method.ArgumentTypes.First()?.Type);
+                var visitor = new InvocationTreeAnalyzer(context, method.DeclaringSyntaxReference.SyntaxTree.GetSemanticModel(context),
+                    new InvokedMethod(method.Method, method.TargetType, method.ArgumentTypes, method.DeclaringSyntaxReference));
+                visitor.Visit(method.DeclaringSyntaxReference.GetSyntax());
+                context.Collector.StepOut();
+                return node;
+            }
         }
     }
 }

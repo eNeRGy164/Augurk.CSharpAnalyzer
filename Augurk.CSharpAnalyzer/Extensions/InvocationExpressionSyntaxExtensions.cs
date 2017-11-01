@@ -13,6 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
+using Augurk.CSharpAnalyzer.Analyzers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,10 +85,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         /// <param name="expression">An <see cref="InvocationExpressionSyntax"/> instance describing the invocation of a particular method.</param>
         /// <param name="symbol">An <see cref="IMethodSymbol"/> describing the method being invoked by the <paramref name="expression"/>.</param>
         /// <param name="model">A <see cref="SemanticModel"/> that can be used to resolve type information.</param>
+        /// <param name="context">An <see cref="InvokedMethod"/> that represents the context in which to determine the target of the invocation.</param>
         /// <returns>Returns a <see cref="TypeInfo"/> instance representing the type of the target being invoked, or <c>null</c> if the type could not be determined.</returns>
-        public static TypeInfo? GetTargetOfInvocation(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, TypeInfo? contextType)
+        public static TypeInfo? GetTargetOfInvocation(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, InvokedMethod context)
         {
-            TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? contextType : expression.GetTargetType(model);
+            TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? context.TargetType : expression.GetTargetType(model);
             if (targetTypeInfo.HasValue)
             {
                 MemberAccessExpressionSyntax memberAccess = expression.Expression as MemberAccessExpressionSyntax;
@@ -95,10 +97,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 if (identifier != null)
                 {
                     SymbolInfo identifierSymbol = model.GetSymbolInfo(identifier);
-                    VariableDeclaratorSyntax syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
-                    if (syntax != null && syntax.ChildNodes().Any())
+                    switch (identifierSymbol.Symbol.Kind)
                     {
-                        targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
+                        case SymbolKind.Local:
+                            VariableDeclaratorSyntax syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
+                            if (syntax != null && syntax.ChildNodes().Any())
+                            {
+                                targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
+                            }
+                            break;
+                        case SymbolKind.Parameter:
+                            if (context.Method != null)
+                            {
+                                var parameter = context.Method.Parameters.FirstOrDefault(p => p.Name == identifierSymbol.Symbol.Name);
+                                var parameterIndex = context.Method.Parameters.IndexOf(parameter);
+                                targetTypeInfo = context.ArgumentTypes.ElementAt(parameterIndex);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

@@ -166,6 +166,86 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("same method is invoked with different concrete types")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void SameMethodIsInvokedWithDifferentConcreteTypes()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("same method is invoked with different concrete types", ((string[])(null)));
+#line 27
+this.ScenarioSetup(scenarioInfo);
+#line 29
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 30
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Level",
+                        "Expression/Signature"});
+            table3.AddRow(new string[] {
+                        "When",
+                        "",
+                        "0",
+                        "same method is invoked with different concrete types"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "1",
+                        "Cucumis.Gardener.HarvestGherkin(Cucumis.Gherkin), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "2",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "2",
+                        "Cucumis.Gherkin.CutVine(), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "3",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "1",
+                        "Cucumis.Gardener.HarvestGherkin(Cucumis.Gherkin), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "2",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "2",
+                        "Cucumis.PickyGherkin.CutVine(), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "3",
+                        "Cucumis.Gherkin.CutVine(), Cucumis"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "4",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table3.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "3",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 31
+ testRunner.Then("the resulting report contains \'When same method is invoked with different concret" +
+                    "e types\'", ((string)(null)), table3, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
