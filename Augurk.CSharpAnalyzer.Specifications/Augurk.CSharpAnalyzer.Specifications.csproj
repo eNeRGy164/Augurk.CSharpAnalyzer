@@ -126,6 +126,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Analyze.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\AnalyzeLocalMethodCalls.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AnalyzeLocalMethodCalls.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\AnalyzeThroughInterfaces.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -151,6 +156,10 @@
     <None Include="Features\Analyze.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Analyze.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\AnalyzeLocalMethodCalls.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AnalyzeLocalMethodCalls.feature.cs</LastGenOutput>
     </None>
     <None Include="Features\AnalyzeThroughInterfaces.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
