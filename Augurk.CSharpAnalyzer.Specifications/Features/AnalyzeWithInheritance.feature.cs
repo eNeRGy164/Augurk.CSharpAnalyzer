@@ -246,6 +246,55 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("an instance method is invoked from its base")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void AnInstanceMethodIsInvokedFromItsBase()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("an instance method is invoked from its base", ((string[])(null)));
+#line 45
+this.ScenarioSetup(scenarioInfo);
+#line 47
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 48
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Level",
+                        "Expression/Signature"});
+            table4.AddRow(new string[] {
+                        "When",
+                        "",
+                        "0",
+                        "an instance method is invoked from its base"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "1",
+                        "Cucumis.Plant.Bloom(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "2",
+                        "Cucumis.Melothria.Wither(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Private",
+                        "true",
+                        "3",
+                        "Cucumus.Melothria.Rot(), Cucumis"});
+            table4.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "4",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 49
+ testRunner.Then("the resulting report contains \'When an instance method is invoked from its base\'", ((string)(null)), table4, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

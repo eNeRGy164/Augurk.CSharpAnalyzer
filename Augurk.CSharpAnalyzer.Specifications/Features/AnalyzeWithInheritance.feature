@@ -41,3 +41,15 @@ Scenario: same method is invoked with different concrete types
 	| Internal | true  | 3     | Cucumis.Gherkin.CutVine(), Cucumis                        |
 	| Public   |       | 4     | System.Console.WriteLine(string), mscorlib                |
 	| Public   |       | 3     | System.Console.WriteLine(string), mscorlib                |
+
+Scenario: an instance method is invoked from its base
+
+	Given 'Cucumis.Specifications' contains feature files
+	When an analysis is run
+	Then the resulting report contains 'When an instance method is invoked from its base'
+	| Kind    | Local | Level | Expression/Signature                         |
+	| When    |       | 0     | an instance method is invoked from its base |
+	| Public  | true  | 1     | Cucumis.Plant.Bloom(), Cucumis               |
+	| Public  | true  | 2     | Cucumis.Melothria.Wither(), Cucumis          |
+	| Private | true  | 3     | Cucumus.Melothria.Rot(), Cucumis             |
+	| Public  |       | 4     | System.Console.WriteLine(string), mscorlib   |

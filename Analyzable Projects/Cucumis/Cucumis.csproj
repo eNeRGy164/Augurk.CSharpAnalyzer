@@ -42,9 +42,11 @@
   <ItemGroup>
     <Compile Include="Gardener.cs" />
     <Compile Include="GherkinExtensions.cs" />
+    <Compile Include="Melothria.cs" />
     <Compile Include="PickyGherkin.cs" />
     <Compile Include="Gherkin.cs" />
     <Compile Include="IGardener.cs" />
+    <Compile Include="Plant.cs" />
     <Compile Include="PlantEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WaterEventArgs.cs" />
