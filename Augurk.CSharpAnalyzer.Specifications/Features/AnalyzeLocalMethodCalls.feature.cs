@@ -138,22 +138,32 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "Kind",
                         "Local",
+                        "Level",
                         "Expression/Signature"});
             table2.AddRow(new string[] {
                         "When",
                         "",
+                        "0",
                         "an explicit base method is called within the entrypoint"});
             table2.AddRow(new string[] {
                         "Public",
                         "true",
+                        "1",
                         "Cucumis.PickyGherkin.OnWater(Cucumis.WaterEventArgs), Cucumis"});
             table2.AddRow(new string[] {
                         "Protected",
                         "true",
+                        "2",
                         "Cucumis.Gherkin.Grow(), Cucumis"});
             table2.AddRow(new string[] {
                         "Public",
                         "",
+                        "3",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table2.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "2",
                         "System.Console.WriteLine(string), mscorlib"});
 #line 18
  testRunner.Then("the resulting report contains \'When an explicit base method is called within the " +
