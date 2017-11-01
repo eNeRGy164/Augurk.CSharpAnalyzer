@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         public static TypeInfo? GetTargetOfInvocation(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, TypeInfo? contextType)
         {
             TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? contextType : expression.GetTargetType(model);
-            if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
+            if (targetTypeInfo.HasValue)
             {
                 MemberAccessExpressionSyntax memberAccess = expression.Expression as MemberAccessExpressionSyntax;
                 IdentifierNameSyntax identifier = memberAccess?.Expression as IdentifierNameSyntax ?? expression.Expression as IdentifierNameSyntax;
