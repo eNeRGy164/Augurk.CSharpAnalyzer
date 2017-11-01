@@ -15,6 +15,11 @@ namespace Cucumis
             Grow();
         }
 
+        public void OnPlant(PlantEventArgs args)
+        {
+            this.SetInitialSize("Seed");
+        }
+
         /// <summary>
         /// Grows the Gherkin.
         /// </summary>
@@ -29,6 +34,11 @@ namespace Cucumis
         internal virtual void CutVine()
         {
             Console.WriteLine("Gherkin: Someone just cut my vine! Goodbye cruel world!");
+        }
+
+        private void SetInitialSize(string size)
+        {
+            Console.WriteLine($"Gherkin: I'm size {size}");
         }
     }
 }

@@ -21,5 +21,12 @@ namespace Cucumis.Specifications.Steps
             // The OnWater will make a base call with the "base." identifier
             gherkin.OnWater(new WaterEventArgs());
         }
+
+        [When("a local method is called within the entrypoint explicitly on this")]
+        public void WhenALocalMethodIsCalledWithinTheEntrypointExplicitlyOnThis()
+        {
+            Gherkin gherkin = new Gherkin();
+            gherkin.OnPlant(new PlantEventArgs());
+        }
     }
 }
