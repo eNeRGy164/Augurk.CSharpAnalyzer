@@ -74,115 +74,162 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             {
                 // Check if the method being invoked is defined in source
                 IMethodSymbol methodInvoked = model.GetSymbolInfo(node).Symbol as IMethodSymbol;
-                SyntaxReference declaringSyntaxReference = methodInvoked.GetComparableSyntax();
                 if (methodInvoked == null)
                 {
+                    // Nothing to see here
                     return node;
                 }
 
-                // Check if the method being invoked is abstract or virtual
-                if ((methodInvoked.IsAbstract || methodInvoked.IsVirtual) && declaringSyntaxReference != null)
+                SyntaxReference declaringSyntaxReference = methodInvoked.GetComparableSyntax();
+                if (declaringSyntaxReference == null)
                 {
-                    var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
-                    if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
-                    {
-                        var memberAccess = node.Expression as MemberAccessExpressionSyntax;
-                        var identifier = memberAccess?.Expression as IdentifierNameSyntax ?? node.Expression as IdentifierNameSyntax;
-                        if (identifier != null)
-                        {
-                            var identifierSymbol = model.GetSymbolInfo(identifier);
-                            var syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
-                            if (syntax != null && syntax.ChildNodes().Any())
-                            {
-                                targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
-                            }
-                        }
-                    }
-
-                    if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
-                    {
-                        if ((targetTypeInfo?.Type.IsAbstract).GetValueOrDefault())
-                        {
-                            // No concrete type was found, no use trying to find an implementation
-                            context.Collector.StepOver(methodInvoked);
-                            return node;
-                        }
-
-                        methodInvoked = targetTypeInfo?.Type.FindImplementationForInterfaceMember(methodInvoked) as IMethodSymbol;
-                        if (context.Collector.IsAlreadyCollected(methodInvoked))
-                        {
-                            // Step over it
-                            context.Collector.StepOver(methodInvoked);
-                            return node;
-                        }
-
-                        // Step into the abstract call
-                        context.Collector.StepInto(methodInvoked);
-                        var argumentTypes = node.GetArgumentTypes(methodInvoked, model);
-                        var visitor = new InvocationTreeAnalyzer(context, methodInvoked.DeclaringSyntaxReferences[0].SyntaxTree.GetSemanticModel(context), methodInvoked, targetTypeInfo, argumentTypes);
-                        visitor.Visit(methodInvoked.DeclaringSyntaxReferences[0].GetSyntax());
-                        context.Collector.StepOut();
-                    }
-                    else
-                    {
-                        // Find the members of the type on which the current method is being invoked that are defined as an override
-                        foreach (var member in targetTypeInfo?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
-                        {
-                            // Check if the current member is the abstract/virtual method being invoked
-                            if (member.OverriddenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
-                            {
-                                // If the member has previously been collected
-                                if (context.Collector.IsAlreadyCollected(member))
-                                {
-                                    // Step over it and continue
-                                    context.Collector.StepOver(member);
-                                    continue;
-                                }
-
-                                // Step into the abstract call
-                                context.Collector.StepInto(member);
-                                var argumentTypes = node.GetArgumentTypes(member, model);
-                                var visitor = new InvocationTreeAnalyzer(context, member.DeclaringSyntaxReferences[0].SyntaxTree.GetSemanticModel(context), member, targetTypeInfo, argumentTypes);
-                                visitor.Visit(member.DeclaringSyntaxReferences[0].GetSyntax());
-                                context.Collector.StepOut();
-                            }
-                        }
-                    }
+                    return StepOver(node, methodInvoked);
                 }
-                else if (declaringSyntaxReference != null && !context.Collector.IsAlreadyCollected(methodInvoked))
-                {
-                    // Step into the method being invoked
-                    var targetTypeInfo = node.Expression.Kind() == SyntaxKind.IdentifierName ? targetType : node.GetTargetType(model);
-                    var argumentTypes = node.GetArgumentTypes(methodInvoked, model).ToList();
-                    if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract && !methodInvoked.IsExtensionMethod)
-                    {
-                        var memberAccess = node.Expression as MemberAccessExpressionSyntax;
-                        var identifier = memberAccess.Expression as IdentifierNameSyntax;
-                        if (identifier != null)
-                        {
-                            var identifierSymbol = model.GetSymbolInfo(identifier);
-                            if (identifierSymbol.Symbol.Kind == SymbolKind.Parameter)
-                            {
-                                var parameter = this.methodAnalyzed.Parameters.FirstOrDefault(p => p.Name == identifierSymbol.Symbol.Name);
-                                var parameterIndex = this.methodAnalyzed.Parameters.IndexOf(parameter);
-                                targetTypeInfo = this.argumentTypes.ElementAt(parameterIndex);
-                            }
-                        }
-                    }
 
-                    context.Collector.StepInto(methodInvoked);
-                    var visitor = new InvocationTreeAnalyzer(context, declaringSyntaxReference.SyntaxTree.GetSemanticModel(context), methodInvoked, targetTypeInfo, argumentTypes);
-                    visitor.Visit(declaringSyntaxReference.GetSyntax());
-                    context.Collector.StepOut();
-                }
-                else
-                {
-                    // Target method is not defined in source, or has been previously collected, so trace it but do not step into it
-                    context.Collector.StepOver(methodInvoked);
-                }
+                return HandleInvocation(node, methodInvoked, declaringSyntaxReference, this.targetType);
             }
 
             return base.VisitInvocationExpression(node);
+        }
+
+        private SyntaxNode HandleInvocation(InvocationExpressionSyntax node, IMethodSymbol methodInvoked, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
+        {
+            // Determine how the method is being invoked
+            if (methodInvoked.ContainingType.TypeKind == TypeKind.Interface)
+            {
+                // Find implementation, or step over
+                return HandleInterfaceMethod(node, methodInvoked, declaringSyntaxReference, targetType);
+            }
+            else if (methodInvoked.ContainingType.TypeKind == TypeKind.Class && methodInvoked.ContainingType.IsAbstract)
+            {
+                if (methodInvoked.IsAbstract)
+                {
+                    // Find implementation, or step over
+                    return HandleAbstractMethod(node, methodInvoked, declaringSyntaxReference, targetType);
+                }
+                else
+                {
+                    if (methodInvoked.IsVirtual || methodInvoked.IsOverride)
+                    {
+                        // Find implementation and step in, or step into virtual method
+                        return HandleVirtualMethod(node, methodInvoked, declaringSyntaxReference, targetType);
+                    }
+                    else
+                    {
+                        // Step in
+                        return StepIn(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                    }
+                }
+            }
+            else
+            {
+                if (methodInvoked.IsVirtual || methodInvoked.IsOverride)
+                {
+                    // Find implementation and step in, or step into virtual method
+                    return HandleVirtualMethod(node, methodInvoked, declaringSyntaxReference, targetType);
+                }
+                else
+                {
+                    // Step in
+                    return StepIn(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                }
+            }
+        }
+
+        private SyntaxNode HandleInterfaceMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
+        {
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            if (!target.HasValue)
+            {
+                return StepOver(node, method);
+            }
+
+            IMethodSymbol implementingMethod = target.Value.Type.FindImplementationForInterfaceMember(method) as IMethodSymbol;
+            if (implementingMethod != null)
+            {
+                return HandleInvocation(node, implementingMethod, implementingMethod.GetComparableSyntax(), target);
+            }
+            else
+            {
+                return StepOver(node, method);
+            }
+        }
+
+        private SyntaxNode HandleAbstractMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
+        {
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            if (target.HasValue)
+            {
+                // Find the members of the type on which the current method is being invoked that are defined as an override
+                foreach (var member in target?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
+                {
+                    // Check if the current member is the abstract/virtual method being invoked
+                    if (member.OverriddenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
+                    {
+                        return HandleInvocation(node, member, member.GetComparableSyntax(), target);
+                    }
+                }
+            }
+
+            return StepOver(node, method);
+        }
+
+        private SyntaxNode HandleVirtualMethod(InvocationExpressionSyntax node, IMethodSymbol method, SyntaxReference declaringSyntaxReference, TypeInfo? targetType)
+        {
+            TypeInfo? target = node.GetTargetOfInvocation(method, model, targetType);
+            if (target.HasValue)
+            {
+                // Find the members of the type on which the current method is being invoked that are defined as an override
+                foreach (var member in target?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
+                {
+                    // Check if the current member is the abstract/virtual method being invoked
+                    if (member.OverriddenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
+                    {
+                        return HandleInvocation(node, member, member.GetComparableSyntax(), target);
+                    }
+                }
+            }
+
+            return StepIn(node, new InvokedMethod(method, this.targetType, node.GetArgumentTypes(method, model), declaringSyntaxReference));
+        }
+
+        private SyntaxNode StepOver(InvocationExpressionSyntax node, IMethodSymbol method)
+        {
+            context.Collector.StepOver(method);
+            return node;
+        }
+
+        private SyntaxNode StepIn(InvocationExpressionSyntax node, InvokedMethod method)
+        {
+            if (context.Collector.IsAlreadyCollected(method.Method))
+            {
+                return StepOver(node, method.Method);
+            }
+            else
+            {
+                context.Collector.StepInto(method.Method);
+                var visitor = new InvocationTreeAnalyzer(context, method.DeclaringSyntaxReference.SyntaxTree.GetSemanticModel(context),
+                    method.Method, method.TargetType, method.ArgumentTypes);
+                visitor.Visit(method.DeclaringSyntaxReference.GetSyntax());
+                context.Collector.StepOut();
+                return node;
+            }
+        }
+
+        private struct InvokedMethod
+        {
+            public InvokedMethod(IMethodSymbol method, TypeInfo? targetType, IEnumerable<TypeInfo?> argumentTypes, SyntaxReference declaringSyntaxReference)
+            {
+                this.Method = method;
+                this.TargetType = targetType;
+                this.ArgumentTypes = argumentTypes;
+                this.DeclaringSyntaxReference = declaringSyntaxReference;
+            }
+
+            public IMethodSymbol Method { get; private set; }
+            public TypeInfo? TargetType { get; private set; }
+            public IEnumerable<TypeInfo?> ArgumentTypes { get; private set; }
+            public SyntaxReference DeclaringSyntaxReference { get; private set; }
         }
     }
 }

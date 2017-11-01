@@ -77,5 +77,33 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 yield return argumentType;
             }
         }
+
+        /// <summary>
+        /// Gets the target of the provided <paramref name="expression"/> using the provided <paramref name="symbol"/> and <paramref name="model"/>.
+        /// </summary>
+        /// <param name="expression">An <see cref="InvocationExpressionSyntax"/> instance describing the invocation of a particular method.</param>
+        /// <param name="symbol">An <see cref="IMethodSymbol"/> describing the method being invoked by the <paramref name="expression"/>.</param>
+        /// <param name="model">A <see cref="SemanticModel"/> that can be used to resolve type information.</param>
+        /// <returns>Returns a <see cref="TypeInfo"/> instance representing the type of the target being invoked, or <c>null</c> if the type could not be determined.</returns>
+        public static TypeInfo? GetTargetOfInvocation(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, TypeInfo? contextType)
+        {
+            TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? contextType : expression.GetTargetType(model);
+            if (targetTypeInfo.HasValue && targetTypeInfo.Value.Type.IsAbstract)
+            {
+                MemberAccessExpressionSyntax memberAccess = expression.Expression as MemberAccessExpressionSyntax;
+                IdentifierNameSyntax identifier = memberAccess?.Expression as IdentifierNameSyntax ?? expression.Expression as IdentifierNameSyntax;
+                if (identifier != null)
+                {
+                    SymbolInfo identifierSymbol = model.GetSymbolInfo(identifier);
+                    VariableDeclaratorSyntax syntax = identifierSymbol.Symbol.GetComparableSyntax()?.GetSyntax() as VariableDeclaratorSyntax;
+                    if (syntax != null && syntax.ChildNodes().Any())
+                    {
+                        targetTypeInfo = model.GetTypeInfo(syntax.ChildNodes().First().ChildNodes().First());
+                    }
+                }
+            }
+
+            return targetTypeInfo;
+        }
     }
 }
