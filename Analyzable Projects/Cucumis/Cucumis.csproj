@@ -41,8 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gardener.cs" />
+    <Compile Include="PickyGherkin.cs" />
+    <Compile Include="Gherkin.cs" />
     <Compile Include="IGardener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WaterEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
