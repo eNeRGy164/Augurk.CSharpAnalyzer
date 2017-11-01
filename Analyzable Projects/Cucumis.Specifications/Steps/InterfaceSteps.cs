@@ -40,12 +40,5 @@ namespace Cucumis.Specifications.Steps
             IGardener gardener = new MockedGardener();
             gardener.WaterPlants();
         }
-
-        [When("an instance method is invoked from its base")]
-        public void WhenAnInstanceMethodIsInvokedFromItsBase()
-        {
-            // The Bloom method is only defined on the base
-            new Melothria().Bloom();
-        }
     }
 }

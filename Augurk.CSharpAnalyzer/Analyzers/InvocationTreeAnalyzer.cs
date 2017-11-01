@@ -116,6 +116,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     else
                     {
                         // Step in
+                        targetType = node.GetTargetOfInvocation(methodInvoked, model, this.invokedMethod);
                         return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
                     }
                 }

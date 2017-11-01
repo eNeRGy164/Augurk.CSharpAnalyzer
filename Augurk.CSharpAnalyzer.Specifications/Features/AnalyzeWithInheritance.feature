@@ -51,5 +51,5 @@ Scenario: an instance method is invoked from its base
 	| When    |       | 0     | an instance method is invoked from its base |
 	| Public  | true  | 1     | Cucumis.Plant.Bloom(), Cucumis               |
 	| Public  | true  | 2     | Cucumis.Melothria.Wither(), Cucumis          |
-	| Private | true  | 3     | Cucumus.Melothria.Rot(), Cucumis             |
+	| Private | true  | 3     | Cucumis.Melothria.Rot(), Cucumis             |
 	| Public  |       | 4     | System.Console.WriteLine(string), mscorlib   |

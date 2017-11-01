@@ -27,5 +27,12 @@ namespace Cucumis.Specifications.Steps
             gardener.HarvestGherkin(new Gherkin());
             gardener.HarvestGherkin(new PickyGherkin());
         }
+
+        [When("an instance method is invoked from its base")]
+        public void WhenAnInstanceMethodIsInvokedFromItsBase()
+        {
+            // The Bloom method is only defined on the base
+            new Melothria().Bloom();
+        }
     }
 }

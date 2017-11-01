@@ -284,7 +284,7 @@ this.ScenarioSetup(scenarioInfo);
                         "Private",
                         "true",
                         "3",
-                        "Cucumus.Melothria.Rot(), Cucumis"});
+                        "Cucumis.Melothria.Rot(), Cucumis"});
             table4.AddRow(new string[] {
                         "Public",
                         "",
