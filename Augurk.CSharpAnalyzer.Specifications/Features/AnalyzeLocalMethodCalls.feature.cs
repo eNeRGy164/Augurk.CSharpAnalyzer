@@ -178,11 +178,11 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void ALocalMethodIsCalledWithinTheEntrypointExplicitlyOnThis()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("a local method is called within the entrypoint explicitly on this", ((string[])(null)));
-#line 25
+#line 26
 this.ScenarioSetup(scenarioInfo);
-#line 27
- testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 29
  testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
@@ -205,7 +205,7 @@ this.ScenarioSetup(scenarioInfo);
                         "Public",
                         "",
                         "System.Console.WriteLine(string), mscorlib"});
-#line 29
+#line 30
  testRunner.Then("the resulting report contains \'When a local method is called within the entrypoin" +
                     "t explicitly on this\'", ((string)(null)), table3, "Then ");
 #line hidden
