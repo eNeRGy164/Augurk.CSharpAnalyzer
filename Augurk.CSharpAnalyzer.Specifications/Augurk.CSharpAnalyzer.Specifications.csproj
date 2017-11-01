@@ -126,6 +126,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Analyze.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\AnalyzeExtensionMethods.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AnalyzeExtensionMethods.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\AnalyzeLocalMethodCalls.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -156,6 +161,10 @@
     <None Include="Features\Analyze.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Analyze.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\AnalyzeExtensionMethods.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AnalyzeExtensionMethods.feature.cs</LastGenOutput>
     </None>
     <None Include="Features\AnalyzeLocalMethodCalls.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

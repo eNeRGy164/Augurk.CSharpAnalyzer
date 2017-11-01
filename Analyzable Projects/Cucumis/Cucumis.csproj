@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gardener.cs" />
+    <Compile Include="GherkinExtensions.cs" />
     <Compile Include="PickyGherkin.cs" />
     <Compile Include="Gherkin.cs" />
     <Compile Include="IGardener.cs" />

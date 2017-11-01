@@ -69,6 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\BasicSteps.cs" />
     <Compile Include="Steps\DriverSteps.cs" />
+    <Compile Include="Steps\ExtensionMethodSteps.cs" />
     <Compile Include="Steps\InheritanceSteps.cs" />
     <Compile Include="Steps\LocalMethodSteps.cs" />
     <Compile Include="Steps\InterfaceSteps.cs" />

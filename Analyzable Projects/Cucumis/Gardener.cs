@@ -33,5 +33,14 @@ namespace Cucumis
         {
             Console.WriteLine("Gardener: I just watered the plants!");
         }
+
+        /// <summary>
+        /// Harvests the provided Gherkin.
+        /// </summary>
+        public void HarvestGherkin(Gherkin gherkin)
+        {
+            Console.WriteLine("Gardener: I am about to harvest a gherkin!");
+            gherkin.CutVine();
+        }
     }
 }

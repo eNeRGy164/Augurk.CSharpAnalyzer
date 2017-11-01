@@ -25,5 +25,10 @@ namespace Cucumis
         {
             Console.WriteLine("Gherkin: I'm growing, weeee!");
         }
+
+        internal virtual void CutVine()
+        {
+            Console.WriteLine("Gherkin: Someone just cut my vine! Goodbye cruel world!");
+        }
     }
 }

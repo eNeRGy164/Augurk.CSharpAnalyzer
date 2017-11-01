@@ -83,9 +83,10 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             List<dynamic> flatList = new List<dynamic>();
             Flatten(new JArray(jWhen), flatList);
 
-            Assert.AreEqual(table.RowCount, flatList.Count, "The provided number of rows does not match the actual number of rows.");
-            for (int counter = 0; counter < table.Rows.Count; counter++)
+            for (int counter = 0; counter < Math.Min(table.RowCount, flatList.Count); counter++)
             {
+                Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature,
+                                $"The Expression/Signature does not match on row {counter}");
                 Assert.AreEqual(table.Rows[counter]["Kind"], flatList[counter].Kind, 
                                 $"The Kind does not match on row {counter}");
                 Assert.AreEqual(!String.IsNullOrWhiteSpace(table.Rows[counter]["Local"]) && Boolean.Parse(table.Rows[counter]["Local"]),
@@ -94,9 +95,10 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                 {
                     Assert.AreEqual(Int32.Parse(table.Rows[counter]["Level"]), flatList[counter].Level, $"The level on row {counter} is incorrect");
                 }
-                Assert.AreEqual(table.Rows[counter]["Expression/Signature"], flatList[counter].Signature, 
-                                $"The Expression/Signature does not match on row {counter}");
             }
+
+            Assert.AreEqual(table.RowCount, flatList.Count, "The provided number of rows does not match the actual number of rows.");
+
         }
 
         private void Flatten(JArray invocations, List<dynamic> flatList, int level = 0)
