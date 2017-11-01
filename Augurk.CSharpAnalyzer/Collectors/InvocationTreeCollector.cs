@@ -20,13 +20,15 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 using Augurk.CSharpAnalyzer.Analyzers;
+using System;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
     public class InvocationTreeCollector
     {
         private readonly List<MethodWrapper> _invocations = new List<MethodWrapper>();
-        private readonly Dictionary<IMethodSymbol, MethodWrapper> _wrappers = new Dictionary<IMethodSymbol, MethodWrapper>(); 
+        private readonly Dictionary<IMethodSymbol, MethodWrapper> _wrappers = new Dictionary<IMethodSymbol, MethodWrapper>();
+        private readonly Dictionary<IMethodSymbol, Dictionary<ITypeSymbol, MethodWrapper>> _extensionMethodWrappers = new Dictionary<IMethodSymbol, Dictionary<ITypeSymbol, MethodWrapper>>();
         private readonly Stack<MethodWrapper> _currentStack = new Stack<MethodWrapper>();
         private readonly AnalyzeContext _context;
 
@@ -46,7 +48,35 @@ namespace Augurk.CSharpAnalyzer.Collectors
         /// <returns>Returns <c>true</c> if the method has previously been collected, otherwise <c>false</c>.</returns>
         public bool IsAlreadyCollected(IMethodSymbol method)
         {
-            return _wrappers.ContainsKey(method);
+            MethodWrapper wrapper;
+            if (_wrappers.TryGetValue(method, out wrapper))
+            {
+                return _currentStack.Contains(wrapper);
+            }
+
+            return false;
+        }
+        
+        /// <summary>
+        /// Determines if the provided <paramref name="method"/> has previously been collected as an extension method on <paramref name="targetType"/>.
+        /// </summary>
+        /// <param name="method">An <see cref="IMethodSymbol"/> representing the extension method to check for.</param>
+        /// <param name="targetType">An <see cref="ITypeSymbol"/> representing the concrete type on which the extension method is being invoked.</param>
+        /// <returns>Returns <c>true</c> if the extension method for the provided <paramref name="targetType"/> has previously been collected, otherwise <c>false</c>.</returns>
+        public bool IsExtensionMethodAlreadyCollected(IMethodSymbol method, ITypeSymbol targetType)
+        {
+            if (!method.IsExtensionMethod)
+            {
+                throw new ArgumentException("Provided method is not an extension method.", nameof(method));
+            }
+
+            Dictionary<ITypeSymbol, MethodWrapper> wrappers;
+            if (!_extensionMethodWrappers.TryGetValue(method, out wrappers))
+            {
+                return false;
+            }
+
+            return wrappers.ContainsKey(targetType);
         }
 
         /// <summary>
@@ -59,11 +89,18 @@ namespace Augurk.CSharpAnalyzer.Collectors
         }
 
         /// <summary>
-        /// Called when a method is being stepped out of.
+        /// Called when an extension method is being stepped into.
         /// </summary>
-        public void StepOut()
+        /// <param name="method">An <see cref="IMethodSymbol"/> describing the extension method that is being stepped into.</param>
+        /// <param name="targetType">An <see cref="ITypeSymbol"/> representing the concrete type on which the extension method is invoked.</param>
+        public void StepIntoExtensionMethod(IMethodSymbol method, ITypeSymbol targetType)
         {
-            _currentStack.Pop();
+            if (!method.IsExtensionMethod)
+            {
+                throw new ArgumentException("Provided method is not an extension method.", nameof(method));
+            }
+
+            _currentStack.Push(StepExtensionMethod(method, targetType));
         }
 
         /// <summary>
@@ -73,6 +110,30 @@ namespace Augurk.CSharpAnalyzer.Collectors
         public void StepOver(IMethodSymbol method)
         {
             Step(method);
+        }
+
+        /// <summary>
+        /// Called when a method is being stepped over.
+        /// </summary>
+        /// <param name="method">An <see cref="IMethodSymbol"/> describing the method that is being stepped over.</param>
+        /// <param name="targetType">An <see cref="ITypeSymbol"/> representing the concrete type on which the extension method is being invoked.</param>
+        public void StepOverExtensionMethod(IMethodSymbol method, ITypeSymbol targetType)
+        {
+            if (!method.IsExtensionMethod)
+            {
+                throw new ArgumentException("Provided method is not an extension method.", nameof(method));
+            }
+
+            StepExtensionMethod(method, targetType);
+        }
+
+        /// <summary>
+        /// Called when a method is being stepped out of.
+        /// </summary>
+        public void StepOut()
+        {
+            MethodWrapper wrapper = _currentStack.Pop();
+            _wrappers.Remove(wrapper.Method);
         }
 
         public JToken GetJsonOutput()
@@ -92,20 +153,21 @@ namespace Augurk.CSharpAnalyzer.Collectors
             {
                 var jInvocation = new JObject();
 
+                var method = invocation.Method;
+
                 var kind = invocation.RegularExpressions.Length > 0 ?
                            "When" :
-                           invocation.Method.DeclaredAccessibility.ToString();
-
+                           method.DeclaredAccessibility.ToString();
 
                 jInvocation.Add("Kind", kind);
-                jInvocation.Add("Signature", $"{invocation.Method.ToDisplayString()}, {invocation.Method.ContainingAssembly.Name}");
+                jInvocation.Add("Signature", $"{method.ToDisplayString()}, {method.ContainingAssembly.Name}");
 
                 if (invocation.RegularExpressions.Length > 0)
                 {
                     jInvocation.Add("RegularExpressions", new JArray(invocation.RegularExpressions));
                 }
 
-                SyntaxReference methodDeclaration = invocation.Method.GetComparableSyntax();
+                SyntaxReference methodDeclaration = method.GetComparableSyntax();
                 if (methodDeclaration != null && _context.SpecifcationsProject.GetDocument(methodDeclaration.SyntaxTree) == null)
                 {
                     jInvocation.Add("Local", true);
@@ -136,6 +198,35 @@ namespace Augurk.CSharpAnalyzer.Collectors
             {
                 wrapper = new MethodWrapper(method);
                 _wrappers.Add(method, wrapper);
+            }
+
+            if (_currentStack.Count == 0)
+            {
+                _invocations.Add(wrapper);
+            }
+            else
+            {
+                _currentStack.Peek().Invocations.Add(wrapper);
+            }
+
+            return wrapper;
+        }
+
+        private MethodWrapper StepExtensionMethod(IMethodSymbol method, ITypeSymbol targetType)
+        {
+            // Try to find a wrapper; otherwise, create one
+            Dictionary<ITypeSymbol, MethodWrapper> wrappers;
+            if (!_extensionMethodWrappers.TryGetValue(method, out wrappers))
+            {
+                wrappers = new Dictionary<ITypeSymbol, MethodWrapper>();
+                _extensionMethodWrappers.Add(method, wrappers);
+            }
+
+            MethodWrapper wrapper;
+            if (!wrappers.TryGetValue(targetType, out wrapper))
+            {
+                wrapper = new MethodWrapper(method);
+                wrappers.Add(targetType, wrapper);
             }
 
             if (_currentStack.Count == 0)

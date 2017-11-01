@@ -8,6 +8,12 @@ namespace Cucumis.Specifications.Steps
         [When("an extension method is invoked")]
         public void WhenAnExtensionMethodIsInvoked()
         {
+            new Gherkin().Harvest();
+        }
+
+        [When("an extension method is invoked on a derived type")]
+        public void WhenAnExtensionMethodIsInvokedOnADerivedType()
+        {
             new PickyGherkin().Harvest();
         }
     }
