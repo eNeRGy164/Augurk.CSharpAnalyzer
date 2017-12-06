@@ -295,6 +295,68 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("an inherited instance method is invoked indirectly")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void AnInheritedInstanceMethodIsInvokedIndirectly()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("an inherited instance method is invoked indirectly", ((string[])(null)));
+#line 57
+this.ScenarioSetup(scenarioInfo);
+#line 59
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 60
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Level",
+                        "Expression/Signature"});
+            table5.AddRow(new string[] {
+                        "When",
+                        "",
+                        "0",
+                        "an inherited instance method is invoked indirectly"});
+            table5.AddRow(new string[] {
+                        "Private",
+                        "",
+                        "1",
+                        "Cucumis.Specifications.Steps.InheritanceSteps.PrepareAndCutVine(Cucumis.Gherkin)," +
+                            " Cucumis.Specifications"});
+            table5.AddRow(new string[] {
+                        "Private",
+                        "",
+                        "2",
+                        "Cucumis.Specifications.Steps.InheritanceSteps.CutVine(Cucumis.Gherkin), Cucumis.S" +
+                            "pecifications"});
+            table5.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "3",
+                        "Cucumis.PickyGherkin.CutVine(), Cucumis"});
+            table5.AddRow(new string[] {
+                        "Internal",
+                        "true",
+                        "4",
+                        "Cucumis.Gherkin.CutVine(), Cucumis"});
+            table5.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "5",
+                        "System.Console.WriteLine(string), mscorlib"});
+            table5.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "4",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 61
+ testRunner.Then("the resulting report contains \'When an inherited instance method is invoked indir" +
+                    "ectly\'", ((string)(null)), table5, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

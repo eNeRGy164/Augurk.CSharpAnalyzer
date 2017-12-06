@@ -48,8 +48,22 @@ Scenario: an instance method is invoked from its base
 	When an analysis is run
 	Then the resulting report contains 'When an instance method is invoked from its base'
 	| Kind    | Local | Level | Expression/Signature                         |
-	| When    |       | 0     | an instance method is invoked from its base |
+	| When    |       | 0     | an instance method is invoked from its base  |
 	| Public  | true  | 1     | Cucumis.Plant.Bloom(), Cucumis               |
 	| Public  | true  | 2     | Cucumis.Melothria.Wither(), Cucumis          |
 	| Private | true  | 3     | Cucumis.Melothria.Rot(), Cucumis             |
 	| Public  |       | 4     | System.Console.WriteLine(string), mscorlib   |
+
+Scenario: an inherited instance method is invoked indirectly
+
+	Given 'Cucumis.Specifications' contains feature files
+	When an analysis is run
+	Then the resulting report contains 'When an inherited instance method is invoked indirectly'
+	| Kind     | Local | Level | Expression/Signature                                                                                     |
+	| When     |       | 0     | an inherited instance method is invoked indirectly                                                       |
+	| Private  |       | 1     | Cucumis.Specifications.Steps.InheritanceSteps.PrepareAndCutVine(Cucumis.Gherkin), Cucumis.Specifications |
+	| Private  |       | 2     | Cucumis.Specifications.Steps.InheritanceSteps.CutVine(Cucumis.Gherkin), Cucumis.Specifications           |
+	| Internal | true  | 3     | Cucumis.PickyGherkin.CutVine(), Cucumis                                                                  |
+	| Internal | true  | 4     | Cucumis.Gherkin.CutVine(), Cucumis                                                                       |
+	| Public   |       | 5     | System.Console.WriteLine(string), mscorlib                                                               |
+	| Public   |       | 4     | System.Console.WriteLine(string), mscorlib                                                               |
