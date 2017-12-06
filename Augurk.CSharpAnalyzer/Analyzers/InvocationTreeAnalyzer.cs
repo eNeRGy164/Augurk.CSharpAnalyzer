@@ -117,7 +117,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                     {
                         // Step in
                         targetType = node.GetTargetOfInvocation(methodInvoked, model, this.invokedMethod);
-                        return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                        return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model, this.invokedMethod), declaringSyntaxReference));
                     }
                 }
             }
@@ -131,7 +131,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 else
                 {
                     // Step in
-                    return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model), declaringSyntaxReference));
+                    return StepInto(node, new InvokedMethod(methodInvoked, targetType, node.GetArgumentTypes(methodInvoked, model, this.invokedMethod), declaringSyntaxReference));
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         {
             TypeInfo? target = node.GetTargetOfInvocation(method, model, this.invokedMethod);
             // Finish by locking in these types through a ToList
-            IEnumerable<TypeInfo?> argumentTypes = Enumerable.Repeat(target, 1).Concat(node.GetArgumentTypes(method.ReducedFrom, model)).ToList();
+            IEnumerable<TypeInfo?> argumentTypes = Enumerable.Repeat(target, 1).Concat(node.GetArgumentTypes(method.ReducedFrom, model, this.invokedMethod)).ToList();
             return StepIntoExtensionMethod(node, new InvokedMethod(method.ReducedFrom, null, argumentTypes, method.ReducedFrom.GetComparableSyntax()));
         }
 
@@ -198,7 +198,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 }
             }
 
-            return StepInto(node, new InvokedMethod(method, this.invokedMethod.TargetType, node.GetArgumentTypes(method, model), declaringSyntaxReference));
+            return StepInto(node, new InvokedMethod(method, this.invokedMethod.TargetType, node.GetArgumentTypes(method, model, this.invokedMethod), declaringSyntaxReference));
         }
 
         private SyntaxNode StepOver(InvocationExpressionSyntax node, IMethodSymbol method)
