@@ -46,7 +46,14 @@ namespace Augurk.CSharpAnalyzer.Commands
             {
                 ConsoleWriter.Write(ConsoleColor.White, $"Starting analysis for solution {input.Solution}");
                 JToken result = Analyze(input).Result;
-                result.WriteTo(new JsonTextWriter(File.CreateText(Path.Combine(Environment.CurrentDirectory, "output.json"))));
+
+                using (FileStream fs = File.Open(Path.Combine(Environment.CurrentDirectory, "output.json"), FileMode.Create))
+                using (StreamWriter sw = new StreamWriter(fs))
+                using (JsonTextWriter writer = new JsonTextWriter(sw))
+                {
+                    result.WriteTo(writer);
+                }
+
                 ConsoleWriter.Write(ConsoleColor.White, $"Analysis succesful for solution {input.Solution}");
                 return true;
             }
