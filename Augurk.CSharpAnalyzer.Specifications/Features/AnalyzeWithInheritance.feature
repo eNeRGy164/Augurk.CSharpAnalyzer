@@ -54,6 +54,19 @@ Scenario: an instance method is invoked from its base
 	| Private | true  | 3     | Cucumis.Melothria.Rot(), Cucumis             |
 	| Public  |       | 4     | System.Console.WriteLine(string), mscorlib   |
 
+Scenario: a base method is called from a far off generations
+Given 'Cucumis.Specifications' contains feature files
+	When an analysis is run
+	Then the resulting report contains 'When a base method is called from a far off generations'
+	| Kind     | Local | Level | Expression/Signature                               |
+	| When     |       | 0     | a base method is called from a far off generations |
+	| Internal | true  | 1     | Cucumis.StubbornGherkin.CutVine(), Cucumis         |
+	| Internal | true  | 2     | Cucumis.PickyGherkin.CutVine(), Cucumis            |
+	| Internal | true  | 3     | Cucumis.Gherkin.CutVine(), Cucumis                 |
+	| Public   |       | 4     | System.Console.WriteLine(string), mscorlib         |
+	| Public   |       | 3     | System.Console.WriteLine(string), mscorlib         |
+	| Public   |       | 2     | System.Console.Write(string), mscorlib             |
+
 Scenario: an inherited instance method is invoked indirectly
 
 	Given 'Cucumis.Specifications' contains feature files

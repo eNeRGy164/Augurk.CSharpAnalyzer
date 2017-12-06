@@ -35,6 +35,13 @@ namespace Cucumis.Specifications.Steps
             new Melothria().Bloom();
         }
 
+        [When("a base method is called from a far off generations")]
+        public void WhenABaseMethodIsCalledFromFarOffGenerations()
+        {
+            Gherkin gherkin = new StubbornGherkin();
+            gherkin.CutVine();
+        }
+
         [When("an inherited instance method is invoked indirectly")]
         public void WhenAnInheritedInstanceMethodIsInvokedIndirectly()
         {

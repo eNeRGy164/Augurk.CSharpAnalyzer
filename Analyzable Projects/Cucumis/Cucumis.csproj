@@ -49,6 +49,7 @@
     <Compile Include="Plant.cs" />
     <Compile Include="PlantEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StubbornGherkin.cs" />
     <Compile Include="WaterEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
