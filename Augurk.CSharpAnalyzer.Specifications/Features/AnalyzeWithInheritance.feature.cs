@@ -329,8 +329,8 @@ this.ScenarioSetup(scenarioInfo);
                         "Private",
                         "",
                         "2",
-                        "Cucumis.Specifications.Steps.InheritanceSteps.CutVine(Cucumis.Gherkin), Cucumis.S" +
-                            "pecifications"});
+                        "Cucumis.Specifications.Steps.InheritanceSteps.CutTheVine(Cucumis.Gherkin), Cucumi" +
+                            "s.Specifications"});
             table5.AddRow(new string[] {
                         "Internal",
                         "true",

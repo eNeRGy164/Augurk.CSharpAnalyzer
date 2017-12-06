@@ -62,7 +62,7 @@ Scenario: an inherited instance method is invoked indirectly
 	| Kind     | Local | Level | Expression/Signature                                                                                     |
 	| When     |       | 0     | an inherited instance method is invoked indirectly                                                       |
 	| Private  |       | 1     | Cucumis.Specifications.Steps.InheritanceSteps.PrepareAndCutVine(Cucumis.Gherkin), Cucumis.Specifications |
-	| Private  |       | 2     | Cucumis.Specifications.Steps.InheritanceSteps.CutVine(Cucumis.Gherkin), Cucumis.Specifications           |
+	| Private  |       | 2     | Cucumis.Specifications.Steps.InheritanceSteps.CutTheVine(Cucumis.Gherkin), Cucumis.Specifications        |
 	| Internal | true  | 3     | Cucumis.PickyGherkin.CutVine(), Cucumis                                                                  |
 	| Internal | true  | 4     | Cucumis.Gherkin.CutVine(), Cucumis                                                                       |
 	| Public   |       | 5     | System.Console.WriteLine(string), mscorlib                                                               |
