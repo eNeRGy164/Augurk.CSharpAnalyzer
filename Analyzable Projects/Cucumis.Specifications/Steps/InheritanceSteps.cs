@@ -34,5 +34,22 @@ namespace Cucumis.Specifications.Steps
             // The Bloom method is only defined on the base
             new Melothria().Bloom();
         }
+
+        [When("an inherited instance method is invoked indirectly")]
+        public void WhenAnInheritedInstanceMethodIsInvokedIndirectly()
+        {
+            PickyGherkin gherkin = new PickyGherkin();
+            PrepareAndCutVine(gherkin);
+        }
+
+        private static void PrepareAndCutVine(Gherkin gherkin)
+        {
+            CutTheVine(gherkin);
+        }
+
+        private static void CutTheVine(Gherkin gherkin)
+        {
+            gherkin.CutVine();
+        }
     }
 }
