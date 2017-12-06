@@ -80,3 +80,15 @@ Scenario: an inherited instance method is invoked indirectly
 	| Internal | true  | 4     | Cucumis.Gherkin.CutVine(), Cucumis                                                                       |
 	| Public   |       | 5     | System.Console.WriteLine(string), mscorlib                                                               |
 	| Public   |       | 4     | System.Console.WriteLine(string), mscorlib                                                               |
+
+Scenario: this actually means that
+
+	Given 'Cucumis.Specifications' contains feature files
+	When an analysis is run
+	Then the resulting report contains 'When this actually means that'
+	| Kind    | Local | Level | Expression/Signature                       |
+	| When    |       | 0     | this actually means that                   |
+	| Public  | true  | 1     | Cucumis.Plant.FreezeAndThaw(), Cucumis     |
+	| Public  | true  | 2     | Cucumis.Melothria.Wither(), Cucumis        |
+	| Private | true  | 3     | Cucumis.Melothria.Rot(), Cucumis           |
+	| Public  |       | 4     | System.Console.WriteLine(string), mscorlib |

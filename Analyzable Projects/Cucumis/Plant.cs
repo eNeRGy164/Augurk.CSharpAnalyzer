@@ -14,6 +14,12 @@
             Wither();
         }
 
+        public void FreezeAndThaw()
+        {
+            //Not really frost-resistant, unless proven otherwise
+            this.Wither();
+        }
+
         /// <summary>
         /// Eventually every plant Withers, in it's own way...
         /// </summary>

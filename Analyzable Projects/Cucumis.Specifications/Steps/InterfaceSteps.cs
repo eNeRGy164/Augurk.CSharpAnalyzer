@@ -40,5 +40,14 @@ namespace Cucumis.Specifications.Steps
             IGardener gardener = new MockedGardener();
             gardener.WaterPlants();
         }
+
+        [When("this actually means that")]
+        public void WhenThisActuallyMeansThat()
+        {
+            Plant plant = new Melothria();
+            // The FreezeAndThaw method uses the this-operator
+            // to reference an abstract method
+            plant.FreezeAndThaw();
+        }
     }
 }

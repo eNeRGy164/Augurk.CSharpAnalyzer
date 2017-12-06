@@ -417,6 +417,55 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("this actually means that")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Analyze With Inheritance")]
+        public virtual void ThisActuallyMeansThat()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("this actually means that", ((string[])(null)));
+#line 84
+this.ScenarioSetup(scenarioInfo);
+#line 86
+ testRunner.Given("\'Cucumis.Specifications\' contains feature files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 87
+ testRunner.When("an analysis is run", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Kind",
+                        "Local",
+                        "Level",
+                        "Expression/Signature"});
+            table7.AddRow(new string[] {
+                        "When",
+                        "",
+                        "0",
+                        "this actually means that"});
+            table7.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "1",
+                        "Cucumis.Plant.FreezeAndThaw(), Cucumis"});
+            table7.AddRow(new string[] {
+                        "Public",
+                        "true",
+                        "2",
+                        "Cucumis.Melothria.Wither(), Cucumis"});
+            table7.AddRow(new string[] {
+                        "Private",
+                        "true",
+                        "3",
+                        "Cucumis.Melothria.Rot(), Cucumis"});
+            table7.AddRow(new string[] {
+                        "Public",
+                        "",
+                        "4",
+                        "System.Console.WriteLine(string), mscorlib"});
+#line 88
+ testRunner.Then("the resulting report contains \'When this actually means that\'", ((string)(null)), table7, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
