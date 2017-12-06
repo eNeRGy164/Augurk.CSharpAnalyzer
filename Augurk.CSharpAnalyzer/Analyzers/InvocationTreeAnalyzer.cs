@@ -190,8 +190,15 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 // Find the members of the type on which the current method is being invoked that are defined as an override
                 foreach (var member in target?.Type.GetMembers().OfType<IMethodSymbol>().Where(member => member.IsOverride))
                 {
+                    // Walk the override tree until we find the method being invoked
+                    IMethodSymbol overridenMethod = member.OverriddenMethod;
+                    while (overridenMethod != null && !overridenMethod.GetComparableSyntax().Equals(declaringSyntaxReference) && overridenMethod.IsOverride)
+                    {
+                        overridenMethod = overridenMethod.OverriddenMethod;
+                    }
+
                     // Check if the current member is the abstract/virtual method being invoked
-                    if (member.OverriddenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
+                    if (overridenMethod.GetComparableSyntax().Equals(declaringSyntaxReference))
                     {
                         return HandleInvocation(node, member, member.GetComparableSyntax(), target);
                     }
