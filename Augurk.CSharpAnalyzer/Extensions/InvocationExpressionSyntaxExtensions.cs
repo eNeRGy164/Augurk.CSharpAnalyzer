@@ -30,8 +30,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         /// </summary>
         /// <param name="expression">An <see cref="InvocationExpressionSyntax"/> representing the invocation.</param>
         /// <param name="model">A <see cref="SemanticModel"/> for the project used to get type information.</param>
+        /// <param name="context">An <see cref="InvokedMethod"/> representing the context in which another method is invoked.</param>
         /// <returns>Returns a <see cref="TypeInfo"/> instance, or <c>null</c> if no type information could be determined.</returns>
-        public static TypeInfo? GetTargetType(this InvocationExpressionSyntax expression, SemanticModel model)
+        public static TypeInfo? GetTargetType(this InvocationExpressionSyntax expression, SemanticModel model, InvokedMethod context)
         {
             if (expression == null)
             {
@@ -42,7 +43,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             var memberAccessExpressionSyntax = expression.Expression as MemberAccessExpressionSyntax;
             if (memberAccessExpressionSyntax != null)
             {
-                result = model.GetTypeInfo(memberAccessExpressionSyntax.Expression);
+                if (memberAccessExpressionSyntax.Expression.Kind() == SyntaxKind.ThisExpression)
+                {
+                    result = context.TargetType;
+                }
+                else
+                {
+                    result = model.GetTypeInfo(memberAccessExpressionSyntax.Expression);
+                }
             }
 
             return result;
@@ -100,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         /// <returns>Returns a <see cref="TypeInfo"/> instance representing the type of the target being invoked, or <c>null</c> if the type could not be determined.</returns>
         public static TypeInfo? GetTargetOfInvocation(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, InvokedMethod context)
         {
-            TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? context.TargetType : expression.GetTargetType(model);
+            TypeInfo? targetTypeInfo = expression.Expression.Kind() == SyntaxKind.IdentifierName ? context.TargetType : expression.GetTargetType(model, context);
             if (targetTypeInfo.HasValue)
             {
                 MemberAccessExpressionSyntax memberAccess = expression.Expression as MemberAccessExpressionSyntax;

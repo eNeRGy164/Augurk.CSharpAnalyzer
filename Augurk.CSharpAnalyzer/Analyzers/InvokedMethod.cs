@@ -1,10 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Augurk.CSharpAnalyzer.Analyzers
 {
     public struct InvokedMethod
     {
+        [DebuggerStepThrough]
         public InvokedMethod(IMethodSymbol method, TypeInfo? targetType, IEnumerable<TypeInfo?> argumentTypes, SyntaxReference declaringSyntaxReference)
         {
             this.Method = method;
