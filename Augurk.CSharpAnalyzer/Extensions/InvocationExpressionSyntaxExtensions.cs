@@ -54,8 +54,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         /// <param name="expression">An <see cref="InvocationExpressionSyntax"/> representing the invocation.</param>
         /// <param name="symbol">An <see cref="IMethodSymbol"/> representing the method being invoked.</param>
         /// <param name="model">A <see cref="SemanticModel"/> for the project used to get type information.</param>
+        /// <param name="context">An <see cref="InvokedMethod"/> representing the context in which the provided <paramref name="symbol"/> is invoked.</param>
         /// <returns>Returns a range of tuples containing the names and types of the arguments passed in the invocation.</returns>
-        public static IEnumerable<TypeInfo?> GetArgumentTypes(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model)
+        public static IEnumerable<TypeInfo?> GetArgumentTypes(this InvocationExpressionSyntax expression, IMethodSymbol symbol, SemanticModel model, InvokedMethod context)
         {
             if (expression == null)
             {
@@ -72,7 +73,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 var argument = expression.ArgumentList.Arguments[i].ChildNodes().FirstOrDefault();
                 if (argument != null)
                 {
-                    argumentType = model.GetTypeInfo(argument);
+                    SymbolInfo symbolInfo = model.GetSymbolInfo(argument);
+                    if (symbolInfo.Symbol?.Kind == SymbolKind.Parameter)
+                    {
+                        var parameter = context.Method.Parameters.FirstOrDefault(p => p.Name == symbolInfo.Symbol.Name);
+                        var parameterIndex = context.Method.Parameters.IndexOf(parameter);
+                        argumentType = context.ArgumentTypes.ElementAt(parameterIndex);
+                    }
+                    else
+                    {
+                        argumentType = model.GetTypeInfo(argument);
+                    }
                 }
 
                 yield return argumentType;
