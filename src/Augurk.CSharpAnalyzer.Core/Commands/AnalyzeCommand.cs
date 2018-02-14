@@ -14,10 +14,11 @@
  limitations under the License.
 */
 using Augurk.CSharpAnalyzer.Analyzers;
-using Augurk.CSharpAnalyzer.Collectors;
 using Augurk.CSharpAnalyzer.Options;
+using Buildalyzer;
+using Buildalyzer.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oakton;
@@ -25,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Augurk.CSharpAnalyzer.Commands
 {
@@ -45,7 +45,7 @@ namespace Augurk.CSharpAnalyzer.Commands
             try
             {
                 ConsoleWriter.Write(ConsoleColor.White, $"Starting analysis for solution {input.Solution}");
-                JToken result = Analyze(input).Result;
+                JToken result = Analyze(input);
 
                 using (FileStream fs = File.Open(Path.Combine(Environment.CurrentDirectory, "output.json"), FileMode.Create))
                 using (StreamWriter sw = new StreamWriter(fs))
@@ -69,21 +69,36 @@ namespace Augurk.CSharpAnalyzer.Commands
         /// Performs the actual analysis.
         /// </summary>
         /// <param name="options">Options passed to the analyze command.</param>
-        public async Task<JToken> Analyze(AnalyzeOptions options)
+        public JToken Analyze(AnalyzeOptions options)
         {
-            // Load the solution
-            var workspace = MSBuildWorkspace.Create();
-            var solution = await workspace.OpenSolutionAsync(options.Solution);
-            var projects = new Dictionary<Project, Lazy<Compilation>>();
+            // Check if the provided solution path is an absolute path
+            string solutionPath = options.Solution;
+            if (!Path.IsPathRooted(solutionPath))
+            {
+                solutionPath = Path.Combine(Environment.CurrentDirectory, solutionPath);
+            }
+
+            // Set up logging
+            LoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.AddDebug();
+
+            // Load the solution into an adhoc workspace
+            AnalyzerManager analyzerManager = new AnalyzerManager(solutionPath, loggerFactory);
+            AdhocWorkspace workspace = new AdhocWorkspace();
+            foreach (var project in analyzerManager.Projects.Values)
+            {
+                project.AddToWorkspace(workspace);
+            }
 
             // Define lazies for the compilation of each project
-            foreach (var project in solution.Projects)
+            var projects = new Dictionary<Project, Lazy<Compilation>>();
+            foreach (var project in workspace.CurrentSolution.Projects)
             {
                 projects.Add(project, new Lazy<Compilation>(() => project.GetCompilationAsync().Result));
             }
 
             // Find the specifications project
-            var specProject = solution.Projects.FirstOrDefault(p => p.Name == options.SpecificationsProject);
+            var specProject = workspace.CurrentSolution.Projects.FirstOrDefault(p => p.Name == options.SpecificationsProject);
             var compilation = projects[specProject].Value;
 
             // Build the analysis context and go through each syntax tree

@@ -1,0 +1,12 @@
+image: Visual Studio 2017
+install:
+- choco install gitversion.portable -pre -y
+assembly_info:
+  patch: false
+before_build:
+- cmd: cd src
+- cmd: dotnet --version
+- cmd: dotnet restore
+- ps: gitversion /l console /output buildserver
+build_script:
+- cmd: msbuild /p:Version=%GITVERSION_MAJORMINORPATCH%

@@ -15,7 +15,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
     [Binding]
     public class AnalyzerSteps
     {
-        private string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Augurk.CSharpAnalyzer.sln");
+        private string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Analyzable Projects\Cucumis.sln");
         private string _targetProject;
         private JToken _output;
 
@@ -26,15 +26,17 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         }
         
         [When(@"an analysis is run")]
-        public async Task WhenAnAnalysisIsRun()
+        public void WhenAnAnalysisIsRun()
         {
-            var options = new AnalyzeOptions();
-            options.Solution = _solution;
-            options.SpecificationsProject = _targetProject;
+            var options = new AnalyzeOptions
+            {
+                Solution = _solution,
+                SpecificationsProject = _targetProject
+            };
 
             var command = new AnalyzeCommand();
 
-            _output = await command.Analyze(options);
+            _output = command.Analyze(options);
         }
 
         [Then(@"the following report is returned for '(.*)'")]
