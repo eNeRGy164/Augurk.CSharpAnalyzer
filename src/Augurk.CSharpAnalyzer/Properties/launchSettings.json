@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Augurk.CSharpAnalyzer": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze \"../Analyzable Projects/Cucumis.sln\" \"Cucumis.Specifications\""
+    }
+  }
+}

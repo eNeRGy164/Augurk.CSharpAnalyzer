@@ -47,7 +47,7 @@ namespace Augurk.CSharpAnalyzer.Commands
                 ConsoleWriter.Write(ConsoleColor.White, $"Starting analysis for solution {input.Solution}");
                 JToken result = Analyze(input);
 
-                using (FileStream fs = File.Open(Path.Combine(Environment.CurrentDirectory, "output.json"), FileMode.Create))
+                using (FileStream fs = File.Open(Path.Combine(Environment.CurrentDirectory, $"{Path.GetFileNameWithoutExtension(input.Solution)}.aar"), FileMode.Create))
                 using (StreamWriter sw = new StreamWriter(fs))
                 using (JsonTextWriter writer = new JsonTextWriter(sw))
                 {
@@ -110,8 +110,20 @@ namespace Augurk.CSharpAnalyzer.Commands
                 visitor.Visit(tree.GetRoot());
             }
 
-            // Return the result
-            return context.Collector.GetJsonOutput();
+            // Build up a report in Json format
+            var analysisReport = new JObject();
+
+            // Add the solution name. As Augurk is unaware of language, 
+            // it only refers to project in the broadest sense of the word
+            analysisReport.Add("AnalyzedProject", Path.GetFileName(options.Solution));
+
+            analysisReport.Add("Timestamp", DateTime.UtcNow);
+
+            // Add the actual results from this analysis
+            analysisReport.Add("RootInvocations", context.Collector.GetJsonOutput());
+
+            // Return the report
+            return analysisReport;
         }
     }
 }

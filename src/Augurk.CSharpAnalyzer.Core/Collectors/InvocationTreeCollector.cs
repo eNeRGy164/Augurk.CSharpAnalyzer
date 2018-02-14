@@ -143,7 +143,7 @@ namespace Augurk.CSharpAnalyzer.Collectors
 
         private JToken GetJsonOutput(IEnumerable<MethodWrapper> invocations, Stack<MethodWrapper> invocationStack = null)
         {
-            var output = new JArray();
+            var rootInvocations = new JArray();
             if (invocationStack == null)
             {
                 invocationStack = new Stack<MethodWrapper>();
@@ -184,10 +184,10 @@ namespace Augurk.CSharpAnalyzer.Collectors
                     jInvocation.Add("Note", "Recursive");
                 }
 
-                output.Add(jInvocation);
+                rootInvocations.Add(jInvocation);
             }
 
-            return output;
+            return rootInvocations;
         }
 
         private MethodWrapper Step(IMethodSymbol method)

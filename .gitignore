@@ -290,5 +290,5 @@ __pycache__/
 # MSBuild Binary Log Files
 *.binlog
 
-# JSON output files
-output.json
+# Augurk Analysis Report output files
+*.aar
