@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Activation;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using TechTalk.SpecFlow;
-using System.Threading.Tasks;
 
 namespace Augurk.CSharpAnalyzer.Specifications.Steps
 {
@@ -17,7 +15,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
     {
         private string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Analyzable Projects\Cucumis.sln");
         private string _targetProject;
-        private JToken _output;
+        private JToken _analyzedInvocations;
 
         [Given(@"'(.*)' contains feature files")]
         public void GivenContainsFeatureFiles(string projectName)
@@ -36,7 +34,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
 
             var command = new AnalyzeCommand();
 
-            _output = command.Analyze(options);
+            _analyzedInvocations = command.Analyze(options)["RootInvocations"];
         }
 
         [Then(@"the following report is returned for '(.*)'")]
@@ -48,7 +46,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         [Then(@"the first (.*) lines of the resulting report are")]
         public void ThenTheFirstLinesOfTheResultingReportAre(int numberOfLinesToCheck, Table table)
         {
-            if (_output == null)
+            if (_analyzedInvocations == null)
             {
                 Assert.Inconclusive("Please use a matching WHEN step before using this THEN step.");
             }
@@ -56,7 +54,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             Assert.AreEqual(numberOfLinesToCheck, table.RowCount, "The provided number of rows does not match the mentioned number of rows.");
 
             List<dynamic> flatList = new List<dynamic>();
-            Flatten(_output as JArray, flatList);
+            Flatten(_analyzedInvocations as JArray, flatList);
 
             for (int counter = 0; counter < numberOfLinesToCheck; counter++)
             {
@@ -70,7 +68,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         [Then(@"the resulting report contains '(.*)'")]
         public void ThenTheResultingReportContains(string when, Table table)
         {
-            if (_output == null)
+            if (_analyzedInvocations == null)
             {
                 Assert.Inconclusive("Please use a matching WHEN step before using this THEN step.");
             }
@@ -79,7 +77,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                 Assert.Inconclusive("When text must start with 'When '");
             }
 
-            JToken jWhen = _output.SingleOrDefault(token => (token["RegularExpressions"]?.Values<string>().Contains(when.Substring(5))).GetValueOrDefault());
+            JToken jWhen = _analyzedInvocations.SingleOrDefault(token => (token["RegularExpressions"]?.Values<string>().Contains(when.Substring(5))).GetValueOrDefault());
             Assert.IsNotNull(jWhen, "The provided step cannot be found");
 
             List<dynamic> flatList = new List<dynamic>();
