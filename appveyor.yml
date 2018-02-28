@@ -8,5 +8,11 @@ before_build:
 - cmd: dotnet --version
 - cmd: dotnet restore
 - ps: gitversion /l console /output buildserver
+configuration: Release
 build_script:
-- cmd: msbuild /p:Version=%GITVERSION_MAJORMINORPATCH%
+- cmd: msbuild /verbosity:minimal /t:Publish /p:Configuration=%CONFIGURATION% /p:Version=%GITVERSION_MAJORMINORPATCH% /p:InformationalVersion=%GITVERSION_INFORMATIONALVERSION%
+after_build:
+- cmd: cd Augurk.CSharpAnalyzer
+- cmd: ECHO nuget pack Augurk.CSharpAnalyzer.nuspec -version "%GitVersion_NuGetVersion%" -prop "Configuration=%CONFIGURATION%"
+- cmd: nuget pack Augurk.CSharpAnalyzer.nuspec -version "%GitVersion_NuGetVersion%" -prop "Configuration=%CONFIGURATION%"
+- cmd: appveyor PushArtifact "Augurk.CSharpAnalyzer.%GitVersion_NuGetVersion%.nupkg"
