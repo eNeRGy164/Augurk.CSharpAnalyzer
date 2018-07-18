@@ -60,7 +60,28 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// </summary>
         /// <param name="node">An <see cref="InvocationExpressionSyntax"/> describing the method being invoked.</param>
         public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
-        {            
+        {
+            // We might have nested invocations thus go one level deeper first if necessary
+            ExpressionSyntax expression = node.Expression;
+            bool goDeeper = true;
+            do
+            {
+                switch (expression)
+                {
+                    case MemberAccessExpressionSyntax maes:
+                        expression = maes.Expression;
+                        break;
+                    case InvocationExpressionSyntax ies:
+                        goDeeper = false;
+                        this.VisitInvocationExpression(ies);
+                        break;
+                    default:
+                        goDeeper = false;
+                        break;
+                }
+            }
+            while (goDeeper);
+            
             // Determine the kind of invocation
             if (node.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression ||
                 node.Expression.Kind() == SyntaxKind.InvocationExpression ||

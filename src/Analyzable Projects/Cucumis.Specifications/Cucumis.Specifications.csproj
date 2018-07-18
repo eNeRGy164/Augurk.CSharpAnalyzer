@@ -16,7 +16,8 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
@@ -38,10 +39,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="SpecFlow" Version="2.2.1" />
+    <PackageReference Include="SpecFlow" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -56,9 +57,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\AntiPatternSteps.cs" />
     <Compile Include="Steps\BasicSteps.cs" />
     <Compile Include="Steps\DriverSteps.cs" />
     <Compile Include="Steps\ExtensionMethodSteps.cs" />
+    <Compile Include="Steps\GenericsSteps.cs" />
     <Compile Include="Steps\InheritanceSteps.cs" />
     <Compile Include="Steps\LocalMethodSteps.cs" />
     <Compile Include="Steps\InterfaceSteps.cs" />
@@ -72,6 +75,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\Augurk.CSharpAnalyzer.Annotations\Augurk.CSharpAnalyzer.Annotations.csproj">
+      <Project>{da3a8ff5-d799-4f75-ae54-6923cbb7ed72}</Project>
+      <Name>Augurk.CSharpAnalyzer.Annotations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Cucumis\Cucumis.csproj">
       <Project>{2eb47a40-f3ea-40a8-acad-65a561216a05}</Project>
       <Name>Cucumis</Name>

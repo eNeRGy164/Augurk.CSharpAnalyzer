@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cucumis
 {
@@ -35,12 +37,42 @@ namespace Cucumis
         }
 
         /// <summary>
+        /// Water a list of plants.
+        /// </summary>
+        /// <param name="plantsToWater">A list of plants to water.</param>
+        internal void Water(IEnumerable<Plant> plantsToWater)
+        {
+            Console.WriteLine($"Gardener: I just watered {plantsToWater.Count()} plants.");
+        }
+
+        /// <summary>
+        /// Water a specific plant.
+        /// </summary>
+        /// <param name="plantToWater">A specific plant to water.</param>
+        internal void Water(Plant plantToWater)
+        {
+            Water(Enumerable.Repeat(plantToWater, 1));
+        }
+
+        /// <summary>
         /// Harvests the provided Gherkin.
         /// </summary>
         public void HarvestGherkin(Gherkin gherkin)
         {
             Console.WriteLine("Gardener: I am about to harvest a gherkin!");
             gherkin.CutVine();
+        }
+
+        /// <summary>
+        /// Harvests the provided <paramref name="plant"/> of an arbitrary type.
+        /// </summary>
+        /// <typeparam name="T">Type of the plant to harvest.</typeparam>
+        /// <param name="plant">A plant to harvest.</param>
+        public void Harvest<T>(T plant)
+            where T : Plant
+        {
+            Console.WriteLine($"Gardener: I am about to harvest a {typeof(T)}");
+            plant.Prune();
         }
     }
 }

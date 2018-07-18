@@ -6,6 +6,8 @@ namespace Cucumis.Specifications.Steps
     [Binding]
     internal sealed class InterfaceSteps
     {
+        private IGardener _myGardener;
+
         [When("entrypoint is an explicit interface implementation")]
         public void WhenEntrypointIsAnExplicitInterfaceImplementation()
         {
@@ -16,8 +18,8 @@ namespace Cucumis.Specifications.Steps
         [When("entrypoint is an implicit interface implementation")]
         public void WhenEntrypointIsAnImplicitInterfaceImplementation()
         {
-            IGardener gardener = new Gardener();
-            gardener.WaterPlants();
+            _myGardener = new Gardener();
+            _myGardener.WaterPlants();
         }
 
         [When("entrypoint is invoked after invocation on interface")]

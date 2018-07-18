@@ -21,6 +21,7 @@ using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 using Augurk.CSharpAnalyzer.Analyzers;
 using System;
+using Augurk.CSharpAnalyzer.Annotations;
 
 namespace Augurk.CSharpAnalyzer.Collectors
 {
@@ -154,6 +155,10 @@ namespace Augurk.CSharpAnalyzer.Collectors
                 var jInvocation = new JObject();
 
                 var method = invocation.Method;
+                if (method.IsGenericMethod)
+                {
+                    method = method.ConstructedFrom;
+                }
 
                 var kind = invocation.RegularExpressions.Length > 0 ?
                            "When" :
@@ -165,6 +170,51 @@ namespace Augurk.CSharpAnalyzer.Collectors
                 if (invocation.RegularExpressions.Length > 0)
                 {
                     jInvocation.Add("RegularExpressions", new JArray(invocation.RegularExpressions));
+                }
+
+                var interfaceDefinitions = method.ContainingType
+                                     .AllInterfaces
+                                     .SelectMany(@interface => @interface.GetMembers().OfType<IMethodSymbol>())
+                                     .Where(m => method.Equals(method.ContainingType.FindImplementationForInterfaceMember(m)))
+                                     .Select(m => $"{m.ToDisplayString()}, {m.ContainingAssembly.Name}")
+                                     .ToList();
+                if (interfaceDefinitions.Any())
+                {
+                    jInvocation.Add("InterfaceDefinitions", new JArray(interfaceDefinitions));
+                }
+
+                if (invocation.AutomationDeclaringType != null && !string.IsNullOrWhiteSpace(invocation.AutomationTargetMethodName))
+                {
+                    var childInvocations = invocation.Invocations.Flatten(i => i.Invocations);
+
+                    List<MethodWrapper> automationTargets = new List<MethodWrapper>();
+                    if (invocation.AutomationTargetOverloadHandling == OverloadHandling.First)
+                    {
+                        automationTargets.Add(childInvocations.FirstOrDefault(i => invocation.AutomationDeclaringType.GetComparableSyntax().Equals(i.Method.ContainingType.GetComparableSyntax()) &&
+                                                                                   i.Method.Name.Equals(invocation.AutomationTargetMethodName, StringComparison.InvariantCulture)));
+                    }
+                    else if (invocation.AutomationTargetOverloadHandling == OverloadHandling.Last)
+                    {
+                        automationTargets.Add(childInvocations.LastOrDefault(i => invocation.AutomationDeclaringType.GetComparableSyntax().Equals(i.Method.ContainingType.GetComparableSyntax()) &&
+                                                                                  i.Method.Name.Equals(invocation.AutomationTargetMethodName, StringComparison.InvariantCulture)));
+                    }
+                    else
+                    {
+                        automationTargets.AddRange(childInvocations.Where(i => invocation.AutomationDeclaringType.GetComparableSyntax().Equals(i.Method.ContainingType.GetComparableSyntax()) &&
+                                                                               i.Method.Name.Equals(invocation.AutomationTargetMethodName, StringComparison.InvariantCulture)));
+                    }
+
+                    if (automationTargets.All(target => target != null))
+                    {
+                        JArray jAutomationTargets = new JArray();
+                        automationTargets.Select(target => (JToken)$"{target.Method.ToDisplayString()}, {target.Method.ContainingAssembly.Name}").ToList().ForEach(jAutomationTargets.Add);
+                        jInvocation.Add("AutomationTargets", jAutomationTargets);
+                    }
+                    else
+                    {
+                        jInvocation.Add("ErrorCode", "UnresolvedAutomationTarget");
+                        jInvocation.Add("ErrorArguments", new JArray(invocation.AutomationDeclaringType.ToString(), invocation.AutomationTargetMethodName));
+                    }
                 }
 
                 SyntaxReference methodDeclaration = method.GetComparableSyntax();
@@ -249,11 +299,25 @@ namespace Augurk.CSharpAnalyzer.Collectors
 
             public ImmutableArray<string> RegularExpressions { get; }
 
+            public INamedTypeSymbol AutomationDeclaringType { get; }
+
+            public string AutomationTargetMethodName { get; }
+
+            public OverloadHandling AutomationTargetOverloadHandling { get; }
+
             public MethodWrapper(IMethodSymbol method)
             {
                 Method = method;
 
                 RegularExpressions = GetRegularExpressions();
+
+                AttributeData automationTargetAttribute = this.GetAutomationTargetAttribute();
+                if (automationTargetAttribute != null)
+                {
+                    AutomationDeclaringType = GetAutomationDeclaringType(automationTargetAttribute);
+                    AutomationTargetMethodName = GetAutomationTargetMethodName(automationTargetAttribute);
+                    AutomationTargetOverloadHandling = GetAutomationTargetOverloadHandling(automationTargetAttribute);
+                }
             }
 
             private ImmutableArray<string> GetRegularExpressions()
@@ -266,6 +330,29 @@ namespace Augurk.CSharpAnalyzer.Collectors
                                 attribute.NamedArguments.FirstOrDefault(na => na.Key =="Regex").Value.Value?.ToString() ?? 
                                 attribute.ConstructorArguments.First().Value.ToString())
                            .ToImmutableArray();
+            }
+
+            private AttributeData GetAutomationTargetAttribute()
+            {
+                return Method.GetAttributes()
+                             .Where(attribute => attribute.AttributeClass.Name.EndsWith("AutomationTargetAttribute")
+                                              && (attribute.ConstructorArguments.Length == 3))
+                             .SingleOrDefault();
+            }
+
+            private INamedTypeSymbol GetAutomationDeclaringType(AttributeData attribute)
+            {
+                return attribute.ConstructorArguments[0].Value as INamedTypeSymbol;
+            }
+
+            private string GetAutomationTargetMethodName(AttributeData attribute)
+            {
+                return attribute.ConstructorArguments[1].Value as string;
+            }
+
+            private OverloadHandling GetAutomationTargetOverloadHandling(AttributeData attribute)
+            {
+                return (OverloadHandling)attribute.ConstructorArguments[2].Value;
             }
         }
     }

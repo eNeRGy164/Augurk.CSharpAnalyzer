@@ -18,7 +18,6 @@ using Augurk.CSharpAnalyzer.Options;
 using Buildalyzer;
 using Buildalyzer.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oakton;
@@ -26,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Augurk.CSharpAnalyzer.Commands
 {
@@ -33,21 +33,24 @@ namespace Augurk.CSharpAnalyzer.Commands
     /// An <see cref="OaktonCommand{T}"/> that implements the analyze command.
     /// </summary>
     [Description("Analyze a solution")]
-    public class AnalyzeCommand : OaktonCommand<AnalyzeOptions>
+    public class AnalyzeCommand : OaktonAsyncCommand<AnalyzeOptions>
     {
+        public Func<string, Task<Workspace>> GetWorkspaceFunc { get; set; }
+
         /// <summary>
         /// Called when the command is being executed.
         /// </summary>
         /// <param name="input">An <see cref="AnalyzeOptions"/> containing the options passed to the command.</param>
         /// <returns>Returns <c>true</c> if the analysis was succesful, otherwise <c>false</c>.</returns>
-        public override bool Execute(AnalyzeOptions input)
+        public override async Task<bool> Execute(AnalyzeOptions input)
         {
             try
             {
                 ConsoleWriter.Write(ConsoleColor.White, $"Starting analysis for solution {input.Solution}");
-                JToken result = Analyze(input);
+                JToken result = await Analyze(input);
 
-                using (FileStream fs = File.Open(Path.Combine(Environment.CurrentDirectory, $"{Path.GetFileNameWithoutExtension(input.Solution)}.aar"), FileMode.Create))
+                string filename = Path.Combine(Path.GetDirectoryName(input.Solution), $"{Path.GetFileNameWithoutExtension(input.Solution)}.aar");
+                using (FileStream fs = File.Open(filename, FileMode.Create))
                 using (StreamWriter sw = new StreamWriter(fs))
                 using (JsonTextWriter writer = new JsonTextWriter(sw))
                 {
@@ -69,7 +72,7 @@ namespace Augurk.CSharpAnalyzer.Commands
         /// Performs the actual analysis.
         /// </summary>
         /// <param name="options">Options passed to the analyze command.</param>
-        public JToken Analyze(AnalyzeOptions options)
+        public async Task<JToken> Analyze(AnalyzeOptions options)
         {
             // Check if the provided solution path is an absolute path
             string solutionPath = options.Solution;
@@ -78,17 +81,8 @@ namespace Augurk.CSharpAnalyzer.Commands
                 solutionPath = Path.Combine(Environment.CurrentDirectory, solutionPath);
             }
 
-            // Set up logging
-            LoggerFactory loggerFactory = new LoggerFactory();
-            loggerFactory.AddDebug();
-
             // Load the solution into an adhoc workspace
-            AnalyzerManager analyzerManager = new AnalyzerManager(solutionPath, loggerFactory);
-            AdhocWorkspace workspace = new AdhocWorkspace();
-            foreach (var project in analyzerManager.Projects.Values)
-            {
-                project.AddToWorkspace(workspace);
-            }
+            Workspace workspace = await this.GetWorkspaceFunc(solutionPath);
 
             // Define lazies for the compilation of each project
             var projects = new Dictionary<Project, Lazy<Compilation>>();

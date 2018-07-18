@@ -13,15 +13,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cucumis", "Analyzable Proje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Augurk.CSharpAnalyzer.Core", "Augurk.CSharpAnalyzer.Core\Augurk.CSharpAnalyzer.Core.csproj", "{F6F8A4AA-93D2-4F3E-A150-FCE52F3C3CF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Augurk.CSharpAnalyzer", "Augurk.CSharpAnalyzer\Augurk.CSharpAnalyzer.csproj", "{97A3795D-AE6C-4B48-9038-88B458405856}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Augurk.CSharpAnalyzer.NetCore", "Augurk.CSharpAnalyzer.NetCore\Augurk.CSharpAnalyzer.NetCore.csproj", "{97A3795D-AE6C-4B48-9038-88B458405856}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Augurk.CSharpAnalyzer.UnitTest", "Augurk.CSharpAnalyzer.UnitTest\Augurk.CSharpAnalyzer.UnitTest.csproj", "{6F3A1960-E494-4668-B03E-99425104E277}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6C76CA85-FD46-4C03-BD30-BEEBC42BB4B2}"
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
+		Augurk.CSharpAnalyzer.nuspec = Augurk.CSharpAnalyzer.nuspec
 		..\GitVersion.yml = ..\GitVersion.yml
+		..\README.md = ..\README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Augurk.CSharpAnalyzer.NetFx", "Augurk.CSharpAnalyzer.NetFx\Augurk.CSharpAnalyzer.NetFx.csproj", "{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Augurk.CSharpAnalyzer.Annotations", "Augurk.CSharpAnalyzer.Annotations\Augurk.CSharpAnalyzer.Annotations.csproj", "{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +85,22 @@ Global
 		{6F3A1960-E494-4668-B03E-99425104E277}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F3A1960-E494-4668-B03E-99425104E277}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F3A1960-E494-4668-B03E-99425104E277}.Release|x86.Build.0 = Release|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A3EC3EA-ADAE-464B-88ED-B676EC5FC872}.Release|x86.Build.0 = Release|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Debug|x86.Build.0 = Debug|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA3A8FF5-D799-4F75-AE54-6923CBB7ED72}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

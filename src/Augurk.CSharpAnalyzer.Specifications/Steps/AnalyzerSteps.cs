@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
+using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TechTalk.SpecFlow;
 
@@ -13,7 +15,7 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
     [Binding]
     public class AnalyzerSteps
     {
-        private string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Analyzable Projects\Cucumis.sln");
+        private readonly string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Analyzable Projects\Cucumis.sln");
         private string _targetProject;
         private JToken _analyzedInvocations;
 
@@ -33,8 +35,14 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
             };
 
             var command = new AnalyzeCommand();
+            command.GetWorkspaceFunc = async solution =>
+            {
+                var workspace = MSBuildWorkspace.Create();
+                await workspace.OpenSolutionAsync(solution);
+                return workspace;
+            };
 
-            _analyzedInvocations = command.Analyze(options)["RootInvocations"];
+            _analyzedInvocations = command.Analyze(options).Result["RootInvocations"];
         }
 
         [Then(@"the following report is returned for '(.*)'")]
@@ -95,6 +103,11 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                 {
                     Assert.AreEqual(Int32.Parse(table.Rows[counter]["Level"]), flatList[counter].Level, $"The level on row {counter} is incorrect");
                 }
+                if (table.Rows[counter]["Kind"].Equals("When") && table.ContainsColumn("AutomationTargets"))
+                {
+                    Assert.AreEqual(table.Rows[counter]["AutomationTargets"], flatList[counter].AutomationTargets,
+                                    $"The AutomationTarget does not match on row {counter}");
+                }
             }
 
             Assert.AreEqual(table.RowCount, flatList.Count, "The provided number of rows does not match the actual number of rows.");
@@ -112,7 +125,8 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
                     Kind = invocation["Kind"].Value<String>(),
                     Local = invocation["Local"]?.Value<bool>() ?? false,
                     Level = level,
-                    Signature = regExpressions == null ? invocation["Signature"].Value<String>() : String.Join(",", ((JArray)regExpressions).ToList())
+                    Signature = regExpressions == null ? invocation["Signature"].Value<String>() : String.Join(",", ((JArray)regExpressions).ToList()),
+                    AutomationTargets = invocation["AutomationTargets"]?.ToString(Formatting.None)
                 });
 
                 JArray deeperInvocations = invocation["Invocations"] as JArray;

@@ -30,5 +30,12 @@ namespace Cucumis.Specifications.Steps
             gardener.PlantGherkin();
             gardener.WaterPlants();
         }
+
+        [When("an asynchronous entrypoint is invoked")]
+        public void WhenAnAsynchronousEntrypointIsInvoked()
+        {
+            var plant = new Melothria();
+            plant.Procreate().GetAwaiter().GetResult();
+        }
     }
 }

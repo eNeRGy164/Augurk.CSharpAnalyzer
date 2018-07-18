@@ -133,6 +133,28 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                                 targetTypeInfo = context.ArgumentTypes.ElementAt(parameterIndex);
                             }
                             break;
+                        case SymbolKind.Field:
+                            SyntaxNode node = expression.Parent;
+                            while (!(node is BlockSyntax))
+                            {
+                                node = node.Parent;
+                            }
+
+                            var statementsInBlock = node.ChildNodes().ToList();
+                            var currentStatementIndex = statementsInBlock.IndexOf(expression.Parent);
+                            var assignments = statementsInBlock.Take(currentStatementIndex)
+                                                               .OfType<ExpressionStatementSyntax>()
+                                                               .Where(s => s.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression))
+                                                               .Select(s => s.Expression as AssignmentExpressionSyntax)
+                                                               .Where(s => model.GetSymbolInfo(s.Left).Symbol == identifierSymbol.Symbol);
+
+                            AssignmentExpressionSyntax lastAssignment = assignments.LastOrDefault();
+                            if (lastAssignment != null)
+                            {
+                                targetTypeInfo = model.GetTypeInfo(lastAssignment.Right);
+                            }
+
+                            break;
                         default:
                             break;
                     }

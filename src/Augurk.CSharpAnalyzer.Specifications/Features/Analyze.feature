@@ -34,3 +34,15 @@ Scenario: When invokes two seperate entrypoints
 	| Public |       | System.Console.WriteLine(string), mscorlib |
 	| Public | true  | Cucumis.Gardener.WaterPlants(), Cucumis    |
 	| Public |       | System.Console.WriteLine(string), mscorlib |
+
+Scenario: When an asynchronous entrypoint is invoked
+
+	Given 'Cucumis.Specifications' contains feature files
+	When an analysis is run
+	Then the resulting report contains 'When an asynchronous entrypoint is invoked'
+	| Kind   | Local | Expression/Signature                                              |
+	| When   |       | an asynchronous entrypoint is invoked                             |
+	| Public | true  | Cucumis.Plant.Procreate(), Cucumis                                |
+	| Public |       | System.Threading.Thread.Sleep(int), mscorlib                      |
+	| Public |       | System.Threading.Tasks.Task.GetAwaiter(), mscorlib                |
+	| Public |       | System.Runtime.CompilerServices.TaskAwaiter.GetResult(), mscorlib |
