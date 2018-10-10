@@ -1,12 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.1</LangVersion>
     <AssemblyName>Augurk.CSharpAnalyzer</AssemblyName>
     <RootNamespace>Augurk.CSharpAnalyzer</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Buildalyzer.Workspaces" Version="2.0.1" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Augurk.CSharpAnalyzer.Core\Augurk.CSharpAnalyzer.Core.csproj" />

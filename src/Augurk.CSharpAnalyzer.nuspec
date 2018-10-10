@@ -16,9 +16,9 @@
     <tags>augurk gherkin specflow commandline roslyn</tags>
   </metadata>
   <files>
-    <file src="Augurk.CSharpAnalyzer.NetFx\bin\$configuration$\**\*.*" target="tools\win-x64" />
-    <file src="Augurk.CSharpAnalyzer.NetCore\bin\$configuration$\netcoreapp2.0\linux-x64\publish\**\*.*" target="tools\linux-x64" />
-    <file src="Augurk.CSharpAnalyzer.NetCore\bin\$configuration$\netcoreapp2.0\osx-x64\publish\**\*.*" target="tools\osx-x64" />
+    <file src="Augurk.CSharpAnalyzer.NetFx\bin\$configuration$\**\*" target="tools\win-x64" />
+    <file src="Augurk.CSharpAnalyzer.NetCore\bin\$configuration$\netcoreapp2.1\linux-x64\publish\**\*" target="tools\linux-x64" />
+    <file src="Augurk.CSharpAnalyzer.NetCore\bin\$configuration$\netcoreapp2.1\osx-x64\publish\**\*" target="tools\osx-x64" />
     <file src="Augurk.CSharpAnalyzer.Annotations\bin\$configuration$\netstandard2.0\Augurk.CSharpAnalyzer.Annotations.dll" target="lib\netstandard20" />
   </files>
 </package>

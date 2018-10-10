@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Augurk.CSharpAnalyzer.Commands;
 using Augurk.CSharpAnalyzer.Options;
+using Augurk.CSharpAnalyzer.Specifications.Support;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -15,7 +17,6 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
     [Binding]
     public class AnalyzerSteps
     {
-        private readonly string _solution = Path.Combine(AppContext.BaseDirectory, @"..\..\..\Analyzable Projects\Cucumis.sln");
         private string _targetProject;
         private JToken _analyzedInvocations;
 
@@ -30,17 +31,12 @@ namespace Augurk.CSharpAnalyzer.Specifications.Steps
         {
             var options = new AnalyzeOptions
             {
-                Solution = _solution,
+                Solution = Hooks.Solution,
                 SpecificationsProject = _targetProject
             };
 
             var command = new AnalyzeCommand();
-            command.GetWorkspaceFunc = async solution =>
-            {
-                var workspace = MSBuildWorkspace.Create();
-                await workspace.OpenSolutionAsync(solution);
-                return workspace;
-            };
+            command.GetWorkspaceFunc = (solution) => Task.FromResult(Hooks.Workspace);
 
             _analyzedInvocations = command.Analyze(options).Result["RootInvocations"];
         }

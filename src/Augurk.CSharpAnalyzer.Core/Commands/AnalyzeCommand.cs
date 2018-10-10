@@ -15,8 +15,6 @@
 */
 using Augurk.CSharpAnalyzer.Analyzers;
 using Augurk.CSharpAnalyzer.Options;
-using Buildalyzer;
-using Buildalyzer.Workspaces;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -94,6 +92,20 @@ namespace Augurk.CSharpAnalyzer.Commands
             // Find the specifications project
             var specProject = workspace.CurrentSolution.Projects.FirstOrDefault(p => p.Name == options.SpecificationsProject);
             var compilation = projects[specProject].Value;
+
+            // Make sure that the project compiled succesfully
+            var diagnostics = compilation.GetDiagnostics();
+            if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                // Errors occured during compilation, we cannot continue here
+                ConsoleWriter.Write(ConsoleColor.Red, $"The following errors occured during compilation of solution '{solutionPath}'");
+                foreach (var diagnostic in diagnostics)
+                {
+                    ConsoleWriter.WriteWithIndent(ConsoleColor.Red, 1, diagnostic.ToString());
+                }
+
+                throw new InvalidOperationException("Unable to analyze solution due to compile errors.");
+            }
 
             // Build the analysis context and go through each syntax tree
             var context = new AnalyzeContext(projects, options);

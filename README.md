@@ -1,5 +1,8 @@
 # Augurk.CSharpAnalyzer
 
+[![Build Status](https://dev.azure.com/augurk/Augurk/_apis/build/status/Augurk.CSharpAnalyzer)](https://dev.azure.com/augurk/Augurk/_build/latest?definitionId=3)
+[![Release Status](https://vsrm.dev.azure.com/augurk/_apis/public/Release/badge/5a86f7f3-d9bb-4198-9b43-bbb7d066dd90/3/5)](https://vsrm.dev.azure.com/augurk/_apis/public/Release/badge/5a86f7f3-d9bb-4198-9b43-bbb7d066dd90/3/5)
+
 Augurk.CSharpAnalyzer is an extension to the Augurk ecosystem that will (eventually) allow users of Augurk to visualize the dependencies between their
 features, even across their entire product portfolio. To do this, Augurk.CSharpAnalyzer uses Roslyn to do static code analysis and tries to figure out
 what is being called by the when steps of a feature. All that information is then accumulated and sent to Augurk for analysis.

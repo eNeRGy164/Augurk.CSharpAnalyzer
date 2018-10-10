@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Build.Locator;
 
 namespace Augurk.CSharpAnalyzer
 {
@@ -58,6 +59,7 @@ namespace Augurk.CSharpAnalyzer
 
         static async Task<Workspace> GetWorkspace(string solutionPath)
         {
+            MSBuildLocator.RegisterDefaults();
             var workspace = MSBuildWorkspace.Create();
             await workspace.OpenSolutionAsync(solutionPath);
             return workspace;

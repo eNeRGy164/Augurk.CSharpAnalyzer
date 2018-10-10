@@ -13,7 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-using System;
 using Oakton;
 using Augurk.CSharpAnalyzer.Commands;
 using System.Threading.Tasks;
@@ -52,7 +51,7 @@ namespace Augurk.CSharpAnalyzer
 
             int result = await executor.ExecuteAsync(args);
 #if DEBUG
-            Console.ReadLine();
+            System.Console.ReadLine();
 #endif
             return result;
         }
