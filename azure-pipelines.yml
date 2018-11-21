@@ -15,7 +15,7 @@ jobs:
   steps:
     - task: NuGetToolInstaller@0
 
-    - task: GitVersion@3
+    - task: GitVersion@4
       inputs:
         updateAssemblyInfo: true
 
@@ -28,7 +28,7 @@ jobs:
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
-        msbuildArgs: '/p:Version=$(GitVersion.MajorMinorPatch) /p:InformationalVersion=$(GitVersion.InformationalVersion)'
+        msbuildArgs: '/p:Version=$(GitVersion.MajorMinorPatch) /p:PackageVersion=$(GitVersion.NuGetVersionV2) /p:InformationalVersion=$(GitVersion.InformationalVersion)'
 
     - task: VSTest@2
       inputs:
@@ -49,6 +49,12 @@ jobs:
       inputs:
         pathToPublish: '$(Build.ArtifactStagingDirectory)'
         artifactName: Windows
+        publishLocation: Container
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(Build.SourcesDirectory)\src\Augurk.CSharpAnalyzer.Annotations\bin\$(buildConfiguration)\Augurk.CSharpAnalyzer.Annotations.$(GitVersion.NuGetVersionV2).nupkg'
+        artifactName: NuGetPackages
         publishLocation: Container
 
     - powershell: |

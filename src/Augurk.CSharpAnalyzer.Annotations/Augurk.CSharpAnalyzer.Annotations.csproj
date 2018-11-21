@@ -1,7 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Jonathan Mezach, Mark Taling</Authors>
+    <Company>Augurk</Company>
+    <PackageProjectUrl>https://augurk.github.io/</PackageProjectUrl>
+    <PackageLicenseUrl>https://augurk.github.io/Augurk/License.md</PackageLicenseUrl>
+    <PackageIconUrl>https://augurk.github.io/img/Analyzers.CSharp/icon128.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Augurk/Augurk.CSharpAnalyzer</RepositoryUrl>
+    <PackageTags>augurk gherkin specflow commandline roslyn</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Copyright>Augurk</Copyright>
+    <Description>Provides attributes used to annotate your code in order to provide additional information to the Augurk.CSharpAnalyzer.</Description>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
 </Project>
