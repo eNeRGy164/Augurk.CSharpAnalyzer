@@ -46,7 +46,7 @@ namespace Augurk.CSharpAnalyzer.Analyzers
         /// Called when a class declaration is discovered in the source code.
         /// </summary>
         /// <param name="node">A <see cref="ClassDeclarationSyntax"/> describing the declared class.</param>
-        public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
+        public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             // Get attributes for the class declaration
             var symbolInfo = model.GetDeclaredSymbol(node);
@@ -56,18 +56,17 @@ namespace Augurk.CSharpAnalyzer.Analyzers
             if (attributes.Any(attribute => attribute.AttributeClass.Name == "BindingAttribute" && attribute.AttributeClass.ContainingNamespace.Name == "SpecFlow"))
             {
                 // A class with a [BindingAttribute] is of interest, so dig deeper
-                return base.VisitClassDeclaration(node);
+                base.VisitClassDeclaration(node);
             }
 
             // Do not analyze classes without a BindingAttribute any further
-            return node;
         }
 
         /// <summary>
         /// Called when a method declaration is discovered in the source code.
         /// </summary>
         /// <param name="node">A <see cref="MethodDeclarationSyntax"/> describing the declared method.</param>
-        public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
+        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             // Get attributes for the method declaration
             var symbolInfo = model.GetDeclaredSymbol(node);
@@ -79,29 +78,23 @@ namespace Augurk.CSharpAnalyzer.Analyzers
                 // A method with a [WhenAttribute] is of interest, let's dig deeper
                 this.insideEntryPoint = true;
                 context.Collector.StepInto(symbolInfo);
-                var result = base.VisitMethodDeclaration(node);
+                base.VisitMethodDeclaration(node);
                 context.Collector.StepOut();
                 this.insideEntryPoint = false;
-                return result;
             }
 
             // Do not analyze methods without a WhenAttribute any further
-            return node;
         }
 
         /// <summary>
         /// Called when a method invocation is discovered in source code.
         /// </summary>
         /// <param name="node">An <see cref="InvocationExpressionSyntax"/> describing the method being invoked.</param>
-        public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
+        public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             if (this.insideEntryPoint)
             {
-                return base.VisitInvocationExpression(node);
-            }
-            else
-            {
-                return node;
+                base.VisitInvocationExpression(node);
             }
         }
     }
